@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{280B63B1-966E-4E40-8E22-2ADEBFDF61C3}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Testy</RootNamespace>
+    <AssemblyName>Testy</AssemblyName>
+    <StartupObject>Testy.Gui.Testy</StartupObject>
+    <ApplicationIcon>Res\testy.ico</ApplicationIcon>
+    <CodePage>65001</CodePage>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="System.Xml" />
+    <Reference Include="GtkUtil">
+      <HintPath>..\CsMyLib\GtkUtil\bin\Release\GtkUtil.dll</HintPath>
+    </Reference>
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="gtk-gui\gui.stetic">
+      <LogicalName>gui.stetic</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Res\testy.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="Gui\Main.cs" />
+    <Compile Include="Gui\AssemblyInfo.cs" />
+    <Compile Include="Gui\MainWindow.cs" />
+    <Compile Include="Core\Document.cs" />
+    <Compile Include="Core\AppInfo.cs" />
+    <Compile Include="gtk-gui\Testy.Gui.MainWindow.cs" />
+    <Compile Include="Core\Question.cs" />
+    <Compile Include="Gui\DlgExport.cs" />
+    <Compile Include="gtk-gui\Testy.Gui.DlgExport.cs" />
+    <Compile Include="Gui\DlgTakeTest.cs" />
+    <Compile Include="gtk-gui\Testy.Gui.DlgTakeTest.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Gui\" />
+    <Folder Include="Core\" />
+    <Folder Include="Res\" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <GtkDesignInfo generateGettext="False" />
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>
