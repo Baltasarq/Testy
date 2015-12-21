@@ -11,7 +11,7 @@ namespace Testy.Core {
 	/// <summary>
 	/// A document test is holding some information, and specially, all questions of the test.
 	/// </summary>
-    public class Document: IEnumerable<Question>
+    public class Document: IDisposable, IEnumerable<Question>
     {	
 		public const string TestFileExt = ".tst";
 		
@@ -711,6 +711,11 @@ namespace Testy.Core {
 		/// </value>
 		public string Notes {
 			get; set;
+		}
+
+		public void Dispose() {
+			this.questions.Clear();
+			this.questions = null;
 		}
 		
 		private List<Question> questions;

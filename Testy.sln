@@ -15,6 +15,39 @@ Global
 		{280B63B1-966E-4E40-8E22-2ADEBFDF61C3}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = Hierarchical
+		$1.ResourceNamePolicy = FileFormatDefault
+		$0.TextStylePolicy = $2
+		$2.inheritsSet = null
+		$2.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $3
+		$3.NamespaceBraceStyle = EndOfLine
+		$3.ClassBraceStyle = EndOfLine
+		$3.InterfaceBraceStyle = EndOfLine
+		$3.StructBraceStyle = EndOfLine
+		$3.EnumBraceStyle = EndOfLine
+		$3.BeforeMethodDeclarationParentheses = False
+		$3.BeforeMethodCallParentheses = False
+		$3.WithinMethodCallParentheses = True
+		$3.BeforeConstructorDeclarationParentheses = False
+		$3.BeforeIndexerDeclarationBracket = False
+		$3.WithinIndexerDeclarationBracket = True
+		$3.BeforeDelegateDeclarationParentheses = False
+		$3.NewParentheses = False
+		$3.WithinParentheses = True
+		$3.WithinIfParentheses = True
+		$3.WithinWhileParentheses = True
+		$3.WithinSizeOfParentheses = True
+		$3.WithinTypeOfParentheses = True
+		$3.WithinNewParentheses = True
+		$3.SpacesWithinBrackets = True
+		$3.SpacesBeforeBrackets = False
+		$3.SpacesAfterTypecast = True
+		$3.inheritsSet = Mono
+		$3.inheritsScope = text/x-csharp
+		$3.scope = text/x-csharp
 		StartupItem = Testy.csproj
 	EndGlobalSection
 EndGlobal

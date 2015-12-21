@@ -57,9 +57,7 @@ namespace Testy.Gui
 			w2.Name = "dialog1_VBox";
 			w2.BorderWidth = ((uint)(2));
 			// Container child dialog1_VBox.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString ("<ui><toolbar name=\'toolbar2\'><toolitem name=\'goBackAction\' action=\'goBackAction\'/" +
-			"><toolitem name=\'goForwardAction\' action=\'goForwardAction\'/><toolitem name=\'quit" +
-			"Action\' action=\'quitAction\'/></toolbar></ui>");
+			this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar2'><toolitem name='goBackAction' action='goBackAction'/><toolitem name='goForwardAction' action='goForwardAction'/><toolitem name='quitAction' action='quitAction'/></toolbar></ui>");
 			this.toolbar2 = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/toolbar2")));
 			this.toolbar2.Name = "toolbar2";
 			this.toolbar2.ShowArrow = false;

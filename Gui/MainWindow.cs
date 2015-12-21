@@ -773,6 +773,58 @@ public partial class MainWindow: Gtk.Window {
 	{
 		this.StoreQuestionText();
 	}
+
+	/// <summary>
+	/// Imports a text file with questions
+	/// </summary>
+	private void OnImport(object sender, EventArgs e)
+	{
+		throw new NotImplementedException();
+	}
+
+	/// <summary>
+	/// Appends a second file of questions, in Testy format.
+	/// </summary>
+	private void OnAppend(object sender, EventArgs e)
+	{
+		if ( this.Document == null ) {
+			Util.MsgError(this, AppInfo.Name, "No document present." );
+			goto End;
+		}
+
+		// Store the current test
+		this.StoreQuestionText();
+
+		try {
+			string fileNameAux = this.fileName;
+
+			bool fileNameChosen = Util.DlgOpen(
+				"Append test",
+				"Append test",
+				this,
+				ref fileNameAux,
+				"*" + Document.TestFileExt
+			);
+
+			if ( fileNameChosen ) {
+				// Append
+				using (Document extDoc = Document.Load( fileNameAux )) {
+					foreach (Question q in extDoc.Questions) {
+						this.Document.Add( q );
+					}
+				}
+
+				// Prepare UI
+				this.UpdateView();
+			}
+		} catch(Exception exc)
+		{
+			Util.MsgError(this, AppInfo.Name, "Error loading: " + fileName + "\n" + exc.Message );
+		}
+
+		End:
+		return;
+	}
 		
 	/// <summary>
 	/// Gets the question being edited, checking the active one in the treeview of questions.
@@ -817,7 +869,7 @@ public partial class MainWindow: Gtk.Window {
 	private TableTextView tvwAnswers;
 	private string fileName;
 	private bool nameGiven;
-	private static int numberOfDocuments = 1;
-}
+	private static int numberOfDocuments = 1;
 
+}
 }

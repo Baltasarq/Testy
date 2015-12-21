@@ -124,6 +124,18 @@
         <property name="StockId">gtk-media-play</property>
         <signal name="Activated" handler="OnTakeTest" />
       </action>
+      <action id="ImportAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">_Import</property>
+        <property name="ShortLabel" translatable="yes">_Import</property>
+        <signal name="Activated" handler="OnImport" />
+      </action>
+      <action id="AppendAction">
+        <property name="Type">Action</property>
+        <property name="Label" translatable="yes">_Append</property>
+        <property name="ShortLabel" translatable="yes">_Append</property>
+        <signal name="Activated" handler="OnAppend" />
+      </action>
     </action-group>
     <property name="MemberName" />
     <property name="Title" translatable="yes">MainWindow</property>
@@ -146,6 +158,8 @@
                 <node type="Menuitem" action="convertAction" />
                 <node type="Menuitem" action="closeAction" />
                 <node type="Menuitem" action="quitAction" />
+                <node type="Menuitem" action="ImportAction" />
+                <node type="Menuitem" action="AppendAction" />
               </node>
               <node type="Menu" action="EditAction">
                 <node type="Menuitem" action="addAction" />
