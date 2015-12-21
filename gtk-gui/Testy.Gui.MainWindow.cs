@@ -190,7 +190,7 @@ namespace Testy.Gui
 			this.vbox1.Name = "vbox1";
 			this.vbox1.Spacing = 6;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString ("<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='newAction' action='newAction'/><menuitem name='openAction' action='openAction'/><menuitem name='saveAction' action='saveAction'/><menuitem name='saveAsAction' action='saveAsAction'/><menuitem name='convertAction' action='convertAction'/><menuitem name='closeAction' action='closeAction'/><menuitem name='quitAction' action='quitAction'/><menuitem name='ImportAction' action='ImportAction'/><menuitem name='AppendAction' action='AppendAction'/></menu><menu name='EditAction' action='EditAction'><menuitem name='addAction' action='addAction'/><menuitem name='removeAction' action='removeAction'/><menuitem name='addAnswerAction' action='addAnswerAction'/><menuitem name='removeAnswerAction' action='removeAnswerAction'/></menu><menu name='ToolsAction' action='ToolsAction'><menuitem name='takeTestAction' action='takeTestAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
+			this.UIManager.AddUiFromString (@"<ui><menubar name='menubar1'><menu name='FileAction' action='FileAction'><menuitem name='newAction' action='newAction'/><menuitem name='openAction' action='openAction'/><menuitem name='saveAction' action='saveAction'/><menuitem name='saveAsAction' action='saveAsAction'/><menuitem name='convertAction' action='convertAction'/><menuitem name='closeAction' action='closeAction'/><menuitem name='quitAction' action='quitAction'/><menuitem name='ImportAction' action='ImportAction'/><menuitem name='AppendAction' action='AppendAction'/></menu><menu name='EditAction' action='EditAction'><menuitem name='addAction' action='addAction'/><menuitem name='removeAction' action='removeAction'/><menuitem name='addAnswerAction' action='addAnswerAction'/><menuitem name='removeAnswerAction' action='removeAnswerAction'/></menu><menu name='ToolsAction' action='ToolsAction'><menuitem name='takeTestAction' action='takeTestAction'/></menu><menu name='HelpAction' action='HelpAction'><menuitem name='aboutAction' action='aboutAction'/></menu></menubar></ui>");
 			this.menubar1 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar1")));
 			this.menubar1.Name = "menubar1";
 			this.vbox1.Add (this.menubar1);
@@ -199,7 +199,7 @@ namespace Testy.Gui
 			w2.Expand = false;
 			w2.Fill = false;
 			// Container child vbox1.Gtk.Box+BoxChild
-			this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar1'><toolitem name='newAction' action='newAction'/><toolitem name='openAction' action='openAction'/><toolitem name='saveAction' action='saveAction'/><toolitem name='closeAction' action='closeAction'/><separator/><toolitem name='addAction' action='addAction'/><toolitem name='removeAction' action='removeAction'/><separator/><toolitem name='takeTestAction' action='takeTestAction'/></toolbar></ui>");
+			this.UIManager.AddUiFromString (@"<ui><toolbar name='toolbar1'><toolitem name='newAction' action='newAction'/><toolitem name='openAction' action='openAction'/><toolitem name='saveAction' action='saveAction'/><toolitem name='closeAction' action='closeAction'/><separator/><toolitem name='addAction' action='addAction'/><toolitem name='removeAction' action='removeAction'/><separator/><toolitem name='takeTestAction' action='takeTestAction'/></toolbar></ui>");
 			this.toolbar1 = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/toolbar1")));
 			this.toolbar1.Name = "toolbar1";
 			this.toolbar1.ShowArrow = false;
@@ -356,13 +356,13 @@ namespace Testy.Gui
 			w18.Expand = false;
 			w18.Fill = false;
 			// Container child hbox2.Gtk.Box+BoxChild
-			this.spNumberValidAnswer = new global::Gtk.SpinButton (1, 100, 1);
+			this.spNumberValidAnswer = new global::Gtk.SpinButton (1D, 100D, 1D);
 			this.spNumberValidAnswer.CanFocus = true;
 			this.spNumberValidAnswer.Name = "spNumberValidAnswer";
-			this.spNumberValidAnswer.Adjustment.PageIncrement = 10;
-			this.spNumberValidAnswer.ClimbRate = 1;
+			this.spNumberValidAnswer.Adjustment.PageIncrement = 10D;
+			this.spNumberValidAnswer.ClimbRate = 1D;
 			this.spNumberValidAnswer.Numeric = true;
-			this.spNumberValidAnswer.Value = 1;
+			this.spNumberValidAnswer.Value = 1D;
 			this.hbox2.Add (this.spNumberValidAnswer);
 			global::Gtk.Box.BoxChild w19 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.spNumberValidAnswer]));
 			w19.Position = 1;

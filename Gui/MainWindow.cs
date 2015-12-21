@@ -455,10 +455,7 @@ public partial class MainWindow: Gtk.Window {
 	protected void OnExport(object sender, System.EventArgs e)
 	{
 		if ( this.Document != null ) {
-			var dlg = new DlgExport( fileName );
-			dlg.SetPosition( WindowPosition.CenterOnParent );
-			dlg.Modal = true;
-            dlg.Icon = this.Icon;
+			var dlg = new DlgExport( this.fileName, this );
             bool chosen = ( (Gtk.ResponseType) dlg.Run() == Gtk.ResponseType.Ok );
 				
 			if ( chosen ) {
