@@ -50,19 +50,20 @@
       <LogicalName>gui.stetic</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Res\testy.ico" />
+    <EmbeddedResource Include="Res\testy.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
     <Compile Include="Gui\Main.cs" />
     <Compile Include="Gui\AssemblyInfo.cs" />
-    <Compile Include="Gui\MainWindow.cs" />
     <Compile Include="Core\Document.cs" />
     <Compile Include="Core\AppInfo.cs" />
-    <Compile Include="gtk-gui\Testy.Gui.MainWindow.cs" />
     <Compile Include="Core\Question.cs" />
     <Compile Include="Gui\DlgTakeTest.cs" />
     <Compile Include="gtk-gui\Testy.Gui.DlgTakeTest.cs" />
     <Compile Include="Gui\DlgExport.cs" />
+    <Compile Include="Gui\MainWindowLogic.cs" />
+    <Compile Include="Gui\MainWindowView.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
