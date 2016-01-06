@@ -51,6 +51,9 @@ namespace Testy.Gui {
 			this.actRemoveAnswer = new Gtk.Action( "remove-answer", "Remove ans_wer", "remove answer", Gtk.Stock.Remove );
 			this.actRemoveAnswer.Activated += (sender, e) => this.RemoveAnswer();
 
+			this.actShuffle = new Gtk.Action( "shuffle", "_Shuffle", "Shuffle questions", Gtk.Stock.Refresh );
+			this.actShuffle.Activated += (sender, e) => this.Shuffle();
+
 			this.actTakeTest = new Gtk.Action( "take-test", "_Take test", "take test", Gtk.Stock.MediaPlay );
 			this.actTakeTest.Activated += (sender, e) => this.TakeTest();
 
@@ -101,6 +104,7 @@ namespace Testy.Gui {
 			var miTools = new Gtk.MenuItem( "_Tools" );
 			var mTools = new Gtk.Menu();
 			miTools.Submenu = mTools;
+			mTools.Add( this.actShuffle.CreateMenuItem() );
 			mTools.Add( this.actTakeTest.CreateMenuItem() );
 
 			// About
@@ -146,7 +150,9 @@ namespace Testy.Gui {
 			this.nbDocPages.SwitchPage += (o, args) => this.OnCurrentPageChanged();
 
 			// Text view for the document
+			var swScrollText = new Gtk.ScrolledWindow();
 			this.txtDocument = new Gtk.TextView() { Editable = false };
+			swScrollText.AddWithViewport( this.txtDocument );
 			this.txtDocument.FocusOutEvent += (o, args) => this.StoreQuestionText();
 
 			// Test treeview
@@ -199,7 +205,7 @@ namespace Testy.Gui {
 			hBox.Pack1( frmTest, false, false );
 			hBox.Pack2( vBox, false, false );
 			this.nbDocPages.AppendPage( hBox, new Gtk.Label( "Edit" ) );
-			this.nbDocPages.AppendPage( this.txtDocument, new Gtk.Label( "Document" ) );
+			this.nbDocPages.AppendPage( swScrollText, new Gtk.Label( "Document" ) );
 			this.nbDocPages.Page = 0;
 		}
 
@@ -250,6 +256,7 @@ namespace Testy.Gui {
 
 		private Gtk.Action actTakeTest;
 		private Gtk.Action actAbout;
+		private Gtk.Action actShuffle;
 
 		private Gtk.Toolbar tbToolbar;
 		private Gtk.MenuBar mbMainMenu;

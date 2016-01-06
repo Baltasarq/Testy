@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using GtkUtil;
 using Testy.Core;
 using System.Collections.ObjectModel;
@@ -21,7 +23,7 @@ namespace Testy.Gui {
 			new string[] { "#", "Respuestas" }
 		);
 
-		public const string DefaultFileName = "test" + Document.TestFileExt;
+		public const string DefaultFileName = "test" + Transformer.TestFileExt;
 
 		public MainWindow()
 			: base(Gtk.WindowType.Toplevel)
@@ -236,7 +238,7 @@ namespace Testy.Gui {
 			try {
 				if ( this.Document != null ) {
 					if ( this.NameGiven ) {
-						this.Document.Save( Document.Format.Xml, fileName );
+						this.Document.Save( Transformer.Format.Xml, fileName );
 					} else {
 						this.SaveAs();
 					}
@@ -263,7 +265,7 @@ namespace Testy.Gui {
 					"Save test as...",
 					this,
 					ref fileNameAux,
-					"*" + Document.TestFileExt
+					"*" + Transformer.TestFileExt
 				);
 
 				if ( fileNameChosen ) {
@@ -272,8 +274,8 @@ namespace Testy.Gui {
 					fileName = fileNameAux;
 
 					// Change extension
-					if ( !fileName.EndsWith( Document.TestFileExt ) ) {
-						fileName = System.IO.Path.ChangeExtension( fileName, Document.TestFileExt );
+					if ( !fileName.EndsWith( Transformer.TestFileExt ) ) {
+						fileName = System.IO.Path.ChangeExtension( fileName, Transformer.TestFileExt );
 					}
 
 					// Update title
@@ -302,13 +304,13 @@ namespace Testy.Gui {
 					"Load test",
 					this,
 					ref fileNameAux,
-					"*" + Document.TestFileExt
+					"*" + Transformer.TestFileExt
 				);
 
 				if ( fileNameChosen ) {
 					this.nameGiven = true;
 					fileName = fileNameAux;
-					this.Document = Document.Load( fileName );
+					this.Document = Document.Load( Transformer.Format.Xml, fileName );
 
 					// Prepare UI
 					this.ActivateGui();
@@ -384,7 +386,7 @@ namespace Testy.Gui {
 		private void Export()
 		{
 			if ( this.Document != null ) {
-				var dlg = new DlgExport( this.fileName, this );
+				var dlg = new DlgExport( this.Document, this.fileName, this );
 				bool chosen = ( (Gtk.ResponseType) dlg.Run() == Gtk.ResponseType.Ok );
 
 				if ( chosen ) {
@@ -639,6 +641,7 @@ namespace Testy.Gui {
 			this.actAddAnswer.Sensitive = active;
 			this.actRemoveAnswer.Sensitive = active;
 			this.actTakeTest.Sensitive = active;
+			this.actShuffle.Sensitive = active;
 
 			// Frames
 			this.nbDocPages.Visible = active;
@@ -693,7 +696,39 @@ namespace Testy.Gui {
 		/// </summary>
 		private void Import()
 		{
-			throw new NotImplementedException();
+			string fileNameAux = this.fileName;
+
+			if ( this.Document != null ) {
+				this.Close();
+			}
+
+			try {
+				bool fileNameChosen = Util.DlgOpen(
+					"Append test",
+					"Append test",
+					this,
+					ref fileNameAux,
+					"*" + Transformer.FormatExt[ (int) Transformer.Format.Text ]
+				);
+
+				if ( fileNameChosen ) {
+					try {
+						// Import and update UI
+						this.Document = Document.Load( Transformer.Format.Text, fileNameAux );
+						this.ActivateGui();
+						this.UpdateView();
+					} catch(Exception exc) {
+						this.Document = null;
+						this.DeactivateGui();
+						Util.MsgError( this, AppInfo.Name, exc.Message );
+					}
+				}
+			} catch(Exception exc)
+			{
+				Util.MsgError(this, AppInfo.Name, "Error loading: " + fileName + "\n" + exc.Message );
+			}
+
+			this.UpdateView();
 		}
 
 		/// <summary>
@@ -717,15 +752,13 @@ namespace Testy.Gui {
 					"Append test",
 					this,
 					ref fileNameAux,
-					"*" + Document.TestFileExt
+					"*" + Transformer.TestFileExt
 				);
 
 				if ( fileNameChosen ) {
 					// Append
-					using (Document extDoc = Document.Load( fileNameAux )) {
-						foreach (Question q in extDoc.Questions) {
-							this.Document.Add( q );
-						}
+					using (Document extDoc = Document.Load( Transformer.Format.Xml, fileNameAux )) {
+						this.Document.Append( extDoc );
 					}
 
 					// Prepare UI
@@ -737,6 +770,22 @@ namespace Testy.Gui {
 			}
 
 			End:
+			return;
+		}
+
+		/// <summary>
+		/// Shuffles all questions
+		/// </summary>
+		private void Shuffle() {
+			if ( this.Document == null ) {
+				this.ReportNoDocument();
+			} else {
+				int numQuestion = this.GetQuestionBeingEdited();
+
+				this.Document.Shuffle();
+				this.UpdateViewAt( numQuestion );
+			}
+
 			return;
 		}
 

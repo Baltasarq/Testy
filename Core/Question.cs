@@ -23,7 +23,8 @@ namespace Testy.Core {
 		/// <param name='txt'>
 		/// The text of the question itself.
 		/// </param>
-		public Question(string txt) : this()
+		public Question(string txt)
+			: this()
 		{
 			this.Text = txt;
 		}
@@ -150,6 +151,27 @@ namespace Testy.Core {
 			} else {
 				throw CreateInvalidArgumentIndexException( index );
 			}
+		}
+
+		/// <summary>
+		/// Shuffles the answers
+		/// </summary>
+		public void Shuffle() {
+			int target = this.answers.Count;
+			var shuffledAnswers = new List<string>( target );
+
+			// Create a shuffled answers list
+			foreach (int n in new RandomSequence( target ).Sequence) {
+				shuffledAnswers.Add( this.answers[ n ] );
+
+				// Store the correct answer in its new position
+				if ( n == this.CorrectAnswer ) {
+					this.CorrectAnswer = shuffledAnswers.Count - 1;
+				}
+			}
+
+			this.answers = shuffledAnswers;
+			return;
 		}
 		
 		/// <summary>

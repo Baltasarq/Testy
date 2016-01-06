@@ -4,8 +4,9 @@ using Testy.Core;
 
 namespace Testy.Gui {
 	public class DlgExport: Gtk.Dialog {
-		public DlgExport(string fileName, Gtk.Window owner)
+		public DlgExport(Document doc, string fileName, Gtk.Window owner)
 		{
+			this.Document = doc;
 			this.TransientFor = owner;
 			this.Icon = owner.Icon;
 			this.SetGeometryHints(
@@ -23,11 +24,13 @@ namespace Testy.Gui {
 		private void Build() {
 			var frmFile = new Gtk.Frame( "" );
 			var frmFormat = new Gtk.Frame( "" );
+			var frmNumQuestions = new Gtk.Frame( "" );
 			var hBoxFile = new Gtk.HBox( false, 5 );
 
 			// Frame labels
 			( (Gtk.Label) frmFile.LabelWidget ).Markup = "<b>File</b>";
 			( (Gtk.Label) frmFormat.LabelWidget ).Markup = "<b>Format</b>";
+			( (Gtk.Label) frmNumQuestions.LabelWidget ).Markup = "<b>Number of questions</b>";
 
 			// File chooser
 			this.edFileName = new Gtk.Entry();
@@ -41,7 +44,7 @@ namespace Testy.Gui {
 			// Combo box of formats
 			this.cbFormat = new Gtk.ComboBox( new string[] {} );
 
-			foreach(string f in Enum.GetNames( typeof( Document.Format ) ) ) {
+			foreach(string f in Enum.GetNames( typeof( Transformer.Format ) ) ) {
 				this.cbFormat.AppendText( f );
 			}
 
@@ -49,9 +52,15 @@ namespace Testy.Gui {
 			this.cbFormat.Changed += (sender, e) => this.UpdateExtensionHonoringFormat();
 			frmFormat.Add( this.cbFormat );
 
+			// Spinner for number of questions
+			this.sbNumQuestions = new Gtk.SpinButton( 1, this.Document.CountQuestions, 1 );
+			this.sbNumQuestions.Value = this.Document.CountQuestions;
+			frmNumQuestions.Add( this.sbNumQuestions );
+
 			// Layout
 			this.VBox.PackStart( frmFile, true, true, 5 );
 			this.VBox.PackStart( frmFormat, true, false, 5 );
+			this.VBox.PackStart( frmNumQuestions, true, false, 5 );
 
 			// Buttons
 			this.AddButton( Gtk.Stock.Cancel, Gtk.ResponseType.Cancel );
@@ -59,9 +68,9 @@ namespace Testy.Gui {
 			this.ShowAll();
 		}
 
-		public Document.Format OutputFormat {
+		public Transformer.Format OutputFormat {
 			get {
-				return (Document.Format) this.cbFormat.Active;
+				return (Transformer.Format) this.cbFormat.Active;
 			}
 		}
 
@@ -71,9 +80,15 @@ namespace Testy.Gui {
 			}
 		}
 
+		public int NumQuestions {
+			get {
+				return (int) this.sbNumQuestions.Value;
+			}
+		}
+
 		private void UpdateExtensionHonoringFormat()
 		{
-			var ext = Document.FormatExt[ this.cbFormat.Active ];
+			var ext = Transformer.FormatExt[ this.cbFormat.Active ];
 			string fileName = this.edFileName.Text;
 
 			if ( !fileName.EndsWith( ext ) ) {
@@ -85,7 +100,7 @@ namespace Testy.Gui {
 		private void OnSaveAsClicked()
 		{
 			string fileName = this.edFileName.Text.Trim();
-			string ext = Document.FormatExt[ this.cbFormat.Active ];
+			string ext = Transformer.FormatExt[ this.cbFormat.Active ];
 			bool chosen;
 
 			chosen = Util.DlgSave(
@@ -102,9 +117,18 @@ namespace Testy.Gui {
 			}
 		}
 
+		/// <summary>
+		/// Gets the document.
+		/// </summary>
+		/// <value>The document.</value>
+		public Document Document {
+			get; private set;
+		}
+
 		private Gtk.Entry edFileName;
 		private Gtk.Button btSave;
 		private Gtk.ComboBox cbFormat;
+		private Gtk.SpinButton sbNumQuestions;
 	}
 }
 
