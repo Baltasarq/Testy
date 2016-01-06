@@ -194,7 +194,7 @@ namespace Testy.Gui {
 			hBoxAnswers.PackStart( bttAnswers, false, false, 5 );
 			vBoxAnswers.PackStart( hBoxAnswers, true, true, 5 );
 			this.spNumberValidAnswer = new Gtk.SpinButton( 1, 20, 1 );
-			this.spNumberValidAnswer.ChangeValue += (o, args) => this.OnCorrectAnswerChanged();
+			this.spNumberValidAnswer.ValueChanged += (o, args) => this.OnCorrectAnswerChanged();
 			hBoxCorrect.PackStart( new Gtk.Label( "Correct answer:" ), false, false, 5 );
 			hBoxCorrect.PackStart( this.spNumberValidAnswer, false, false, 5 );
 			vBoxAnswers.PackStart( hBoxCorrect, false, false, 5 );

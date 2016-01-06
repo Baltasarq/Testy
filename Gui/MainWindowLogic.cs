@@ -52,13 +52,14 @@ namespace Testy.Gui {
 		/// </summary>
 		private void OnQuestionChanged()
 		{
+			Console.WriteLine("SII!!!");
 			int row;
 			int col;
 
 			this.tvwDocument.GetCurrentCell( out row, out col );
 
 			if ( row >= 0
-				&& row < this.Document.CountQuestions )
+			  && row < this.Document.CountQuestions )
 			{
 				this.UpdateViewAt( row );
 			} else {
@@ -102,7 +103,7 @@ namespace Testy.Gui {
 		private void OnCorrectAnswerChanged()
 		{
 			int num = (int) this.spNumberValidAnswer.Value;
-
+			Console.WriteLine("=> !!! Selected:" + num);
 			// Retrieve the question object
 			var q = this.Document[ this.CurrentQuestion ];
 
@@ -783,7 +784,7 @@ namespace Testy.Gui {
 				int numQuestion = this.GetQuestionBeingEdited();
 
 				this.Document.Shuffle();
-				this.UpdateViewAt( numQuestion );
+				this.UpdateView();
 			}
 
 			return;
