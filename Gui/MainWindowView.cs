@@ -168,6 +168,7 @@ namespace Testy.Gui {
 			var swScrolledQuestion = new Gtk.ScrolledWindow();
 			( (Gtk.Label) frmQuestion.LabelWidget ).Markup = "<b>Question</b>";
 			this.edQuestionText = new Gtk.TextView();
+			this.edQuestionText.KeyReleaseEvent += (o, args) => this.OnQuestionTextChanged();
 			swScrolledQuestion.AddWithViewport( edQuestionText );
 			frmQuestion.Add( swScrolledQuestion );
 			vBox.PackStart( frmQuestion, false, false, 5 );

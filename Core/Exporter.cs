@@ -88,6 +88,22 @@ namespace Testy.Core {
 		}
 
 		/// <summary>
+		/// Finds out the maximum number of answers in the document
+		/// </summary>
+		/// <returns>The max answers, as an int.</returns>
+		protected int FindMaxAnswers() {
+			int toret = 0;
+
+			foreach(Question q in this.Document.Questions) {
+				if ( toret < q.CountAnswers ) {
+					toret = q.CountAnswers;
+				}
+			}
+
+			return toret;
+		}
+
+		/// <summary>
 		/// Exports the document to the specified output.
 		/// </summary>
 		public abstract void Export();

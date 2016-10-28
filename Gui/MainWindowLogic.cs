@@ -35,7 +35,7 @@ namespace Testy.Gui {
 			// Prepare tree views
 			this.tvwDocument = new TableTextView( this.tvDocument, HeaderDocumentEn.Count );
 			this.tvwDocument.Headers = HeaderDocumentEn;
-			this.tvDocument.ButtonReleaseEvent += (sender, e) => this.OnQuestionChanged();
+			this.tvDocument.ButtonReleaseEvent += (sender, e) => this.OnQuestionFocusChangedTo();
 			this.tvwDocument.SetEditable( 1, false );
 			this.tvwAnswers  = new TableTextView( this.tvAnswers, HeaderDocumentEn.Count );
 			this.tvwAnswers.Headers = HeaderAnswersEn;
@@ -50,9 +50,8 @@ namespace Testy.Gui {
 		/// <summary>
 		/// Update the view of the current question
 		/// </summary>
-		private void OnQuestionChanged()
+		private void OnQuestionFocusChangedTo()
 		{
-			Console.WriteLine("SII!!!");
 			int row;
 			int col;
 
@@ -65,6 +64,23 @@ namespace Testy.Gui {
 			} else {
 				this.ReportNoRow( row );
 			}
+		}
+
+		/// <summary>
+		/// Triggered when the text of the question is changed
+		/// </summary>
+		private void OnQuestionTextChanged()
+		{
+			int questionNumber = this.GetQuestionBeingEdited();
+
+			if ( questionNumber >= 0 ) {
+				var q = this.Document[ questionNumber ];
+				q.Text = this.edQuestionText.Buffer.Text;
+			} else {
+				this.ReportNoRow( questionNumber );
+			}
+
+			return;
 		}
 
 		/// <summary>
@@ -95,6 +111,8 @@ namespace Testy.Gui {
 			} else {
 				this.ReportNoRow( questionNumber );
 			}
+
+			return;
 		}
 
 		/// <summary>
@@ -391,15 +409,35 @@ namespace Testy.Gui {
 				bool chosen = ( (Gtk.ResponseType) dlg.Run() == Gtk.ResponseType.Ok );
 
 				if ( chosen ) {
+					Document doc = this.Document;
+
+					if ( dlg.NumQuestions < this.Document.CountQuestions ) {
+						// Create a new document
+						doc = new Document();
+						doc.Clear();
+						var questions = this.Document.Questions;
+						var seq = new RandomSequence( this.Document.CountQuestions ).Sequence;
+						for(int i = 0; i < seq.Count; ++i) {
+							doc.Add( questions[ seq[ i ] ] );
+
+							if ( i >= dlg.NumQuestions ) {
+								break;
+							}
+						}
+					}
+
 					this.SetStatus( "Saving..." );
-					this.Document.Save( dlg.OutputFormat, dlg.FileName );
+					doc.Save( dlg.OutputFormat, dlg.FileName );
 					this.SetStatus();
+					Util.MsgInfo( this, AppInfo.Name, "File generated: " + dlg.FileName );
 				}
 
 				dlg.Destroy();
 			} else {
 				this.ReportNoDocument();
 			}
+
+			return;
 		}
 
 		/// <summary>
@@ -412,7 +450,7 @@ namespace Testy.Gui {
 				this.StoreQuestionText();
 
 				// Add one more question
-				this.Document.Add( "Q?: " + ( this.Document.CountQuestions +1).ToString() );
+				this.Document.Add( "Q?: " + ( this.Document.CountQuestions + 1 ).ToString() );
 
 				// Update tree view for document
 				int numRow = this.tvwDocument.NumRows;

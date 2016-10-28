@@ -213,10 +213,6 @@ namespace Testy.Core {
 			return toret.ToString();
 		}
 		
-
-		
-
-
         /// <summary>
         /// Generates a html version.
         /// </summary>
@@ -227,9 +223,6 @@ namespace Testy.Core {
         {
             var toret = new StringBuilder();
 
-            toret.AppendLine( "<html><head>" );
-            toret.AppendLine( "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">");
-            toret.AppendLine( "</head><body>" );
             toret.AppendLine( "<h1>" + this.Title + "</h1>" );
             toret.AppendLine( "<h2>" + this.Date.Date.ToShortDateString() + "</h2>" );
             toret.AppendLine( "<p>" + this.Notes + "</p>" );
@@ -240,7 +233,6 @@ namespace Testy.Core {
             }
 
             toret.AppendLine( "</ol>" );
-            toret.AppendLine( "</body></html>" );
             return toret.ToString();
         }
 		

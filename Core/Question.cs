@@ -159,14 +159,18 @@ namespace Testy.Core {
 		public void Shuffle() {
 			int target = this.answers.Count;
 			var shuffledAnswers = new List<string>( target );
+			bool determinedCorrect = false;
 
 			// Create a shuffled answers list
 			foreach (int n in new RandomSequence( target ).Sequence) {
 				shuffledAnswers.Add( this.answers[ n ] );
 
 				// Store the correct answer in its new position
-				if ( n == this.CorrectAnswer ) {
+				if ( !determinedCorrect
+				  && n == this.CorrectAnswer )
+				{
 					this.CorrectAnswer = shuffledAnswers.Count - 1;
+					determinedCorrect = true;
 				}
 			}
 
@@ -191,14 +195,6 @@ namespace Testy.Core {
 			for(int i = 0; i < this.CountAnswers; ++i) {
 
                 toret.Append( '\t' );
-
-                if ( i == this.CorrectAnswer ) {
-                    toret.Append( '*' );
-                } else {
-                    toret.Append( ' ' );
-                }
-
-                toret.Append( ' ' );
                 toret.Append( (char) ( 'a' + i ) );
                 toret.Append( ") " );
 				toret.AppendLine( this.GetAnswer( i ) );
@@ -223,14 +219,7 @@ namespace Testy.Core {
             
             // Add all the answers
             for(int i = 0; i < this.CountAnswers; ++i) {
-
-                toret.Append( "<p" );
-
-                if ( i == this.CorrectAnswer ) {
-                    toret.Append( " style=\"background-color:yellow;\"" );
-                }
-
-                toret.Append( ">&nbsp;&nbsp;&nbsp;&nbsp;" );
+                toret.Append( "<p>&nbsp;&nbsp;&nbsp;&nbsp;" );
                 toret.Append( (char) ( 'a' + i ) );
                 toret.Append( ") " );
                 toret.Append( this.GetAnswer( i ) );

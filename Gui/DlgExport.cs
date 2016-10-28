@@ -19,6 +19,7 @@ namespace Testy.Gui {
 
 			this.edFileName.Text = fileName;
 			this.SetPosition( Gtk.WindowPosition.CenterOnParent );
+			this.UpdateExtensionHonoringFormat();
 		}
 
 		private void Build() {
@@ -89,11 +90,10 @@ namespace Testy.Gui {
 		private void UpdateExtensionHonoringFormat()
 		{
 			var ext = Transformer.FormatExt[ this.cbFormat.Active ];
-			string fileName = this.edFileName.Text;
+			string fileName = this.edFileName.Text.Trim();
 
 			if ( !fileName.EndsWith( ext ) ) {
-				fileName = System.IO.Path.ChangeExtension( fileName, ext );
-				this.edFileName.Text = fileName;
+				this.edFileName.Text = System.IO.Path.ChangeExtension( fileName, ext );
 			}
 		}
 
