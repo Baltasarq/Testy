@@ -154,7 +154,8 @@ namespace Testy.Core {
 		/// <summary>
 		/// Shuffles all questions
 		/// </summary>
-		public void Shuffle() {
+		public void Shuffle()
+		{
 			int target = this.questions.Count;
 			var shuffledQuestions = new List<Question>( target );
 

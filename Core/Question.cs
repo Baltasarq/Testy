@@ -159,7 +159,8 @@ namespace Testy.Core {
 		/// <summary>
 		/// Shuffles the answers
 		/// </summary>
-		public void Shuffle() {
+		public void Shuffle()
+		{
 			int target = this.answers.Count;
 			var shuffledAnswers = new List<string>( target );
 			bool determinedCorrect = false;
