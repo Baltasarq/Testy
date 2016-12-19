@@ -21,9 +21,9 @@ namespace Testy.Core {
 		private static string BuildCsvFileName(string prefix, string fileName )
 		{
 			// Decompose
-			var fileExt = System.IO.Path.GetExtension( fileName );
-			var name = System.IO.Path.GetFileNameWithoutExtension( fileName );
-			var fileDir = System.IO.Path.GetDirectoryName( fileName );
+			var fileExt = Path.GetExtension( fileName );
+			var name = Path.GetFileNameWithoutExtension( fileName );
+			var fileDir = Path.GetDirectoryName( fileName );
 
 			// Add the prefix
 			name = prefix + name;

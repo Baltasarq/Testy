@@ -25,7 +25,7 @@ namespace Testy.Core {
 		/// Save the document in the specified fmt and fileName.
 		/// </summary>
 		/// <param name='fmt'>
-		/// The format of the file.
+		/// The format of the file (Xml, Html...).
 		/// </param>
 		/// <param name='fileName'>
 		/// The file name, as a string.
@@ -41,6 +41,7 @@ namespace Testy.Core {
 		/// <summary>
 		/// Imports the test from a file, in a given format
 		/// </summary>
+		/// <param name = "fmt">The format of the file (Xml, Html...).</param>
 		/// <param name="fileName">The name of the file, as a string.</param>
 		/// <seealso cref="Testy.Core.Importer"/>
 		public static Document Load(Transformer.Format fmt, string fileName)
@@ -125,7 +126,7 @@ namespace Testy.Core {
 					this.AddDefaultQuestion();
 				}
 			} else {
-				throw new ArgumentException( "Invalid question index: " + index.ToString() );
+				throw new ArgumentException( "Invalid question index: " + index );
 			}
 		}
 		

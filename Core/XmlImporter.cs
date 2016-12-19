@@ -11,9 +11,6 @@ namespace Testy.Core {
 		/// <summary>
 		/// Creates a new document, loading its contents from a XML file.
 		/// </summary>
-		/// <param name='fileName'>
-		/// The file name, as a string.
-		/// </param>
 		public override Document Import()
 		{
 			var toret = new Document();

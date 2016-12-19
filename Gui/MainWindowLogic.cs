@@ -1,26 +1,23 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using GtkUtil;
 using Testy.Core;
 using System.Collections.ObjectModel;
 
 namespace Testy.Gui {
 	public partial class MainWindow {
 		public static ReadOnlyCollection<string> HeaderDocumentEn = new ReadOnlyCollection<string>(
-			new string[] { "#", "Questions" }
+			new [] { "#", "Questions" }
 		);
 
 		public static ReadOnlyCollection<string> HeaderDocumentEs = new ReadOnlyCollection<string>(
-			new string[] { "#", "Preguntas" }
+			new [] { "#", "Preguntas" }
 		);
 
 		public static ReadOnlyCollection<string> HeaderAnswersEn = new ReadOnlyCollection<string>(
-			new string[] { "#", "Answers" }
+			new [] { "#", "Answers" }
 		);
 
 		public static ReadOnlyCollection<string> HeaderAnswersEs = new ReadOnlyCollection<string>(
-			new string[] { "#", "Respuestas" }
+			new [] { "#", "Respuestas" }
 		);
 
 		public const string DefaultFileName = "test" + Transformer.TestFileExt;
@@ -33,11 +30,11 @@ namespace Testy.Gui {
 			this.DeactivateGui();
 
 			// Prepare tree views
-			this.tvwDocument = new TableTextView( this.tvDocument, HeaderDocumentEn.Count );
+			this.tvwDocument = new GtkUtil.TableTextView( this.tvDocument, HeaderDocumentEn.Count );
 			this.tvwDocument.Headers = HeaderDocumentEn;
 			this.tvDocument.ButtonReleaseEvent += (sender, e) => this.OnQuestionFocusChangedTo();
 			this.tvwDocument.SetEditable( 1, false );
-			this.tvwAnswers  = new TableTextView( this.tvAnswers, HeaderDocumentEn.Count );
+			this.tvwAnswers  = new GtkUtil.TableTextView( this.tvAnswers, HeaderDocumentEn.Count );
 			this.tvwAnswers.Headers = HeaderAnswersEn;
 			this.tvwAnswers.tableChanged += this.OnAnswerChanged;
 
@@ -157,7 +154,7 @@ namespace Testy.Gui {
 					// Update document's view question
 					this.tvwDocument.Set( row, 1, this.Document[ row ].Text );
 
-					Util.UpdateUI();
+					GtkUtil.Util.UpdateUI();
 				} else {
 					this.ReportNoRow( row );
 				}
@@ -198,9 +195,7 @@ namespace Testy.Gui {
 				fn = fn.Trim();
 			}
 
-			if ( fn != null
-				&& fn.Length > 0 )
-			{
+			if ( !string.IsNullOrEmpty( fn ) ) {
 				title = fn + " - " + AppInfo.Name;
 			} else {
 				title = AppInfo.Name;
@@ -233,15 +228,15 @@ namespace Testy.Gui {
 		/// </summary>
 		private void CreateNewDefaultFileName()
 		{
-			string fileName = System.IO.Path.GetFileNameWithoutExtension( DefaultFileName );
+			string fName = System.IO.Path.GetFileNameWithoutExtension( DefaultFileName );
 
 			// Build file name
-			fileName += numberOfDocuments.ToString();
-			fileName += System.IO.Path.GetExtension( DefaultFileName );
+			fName += numberOfDocuments.ToString();
+			fName += System.IO.Path.GetExtension( DefaultFileName );
 
 			this.fileName = System.IO.Path.Combine(
 				Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments ),
-				fileName
+				fName
 			);
 
 			// Prepare next one
@@ -264,7 +259,7 @@ namespace Testy.Gui {
 				}
 			} catch(Exception exc)
 			{
-				Util.MsgError(this, AppInfo.Name, "Error saving: " + fileName + "\n" + exc.Message );
+				GtkUtil.Util.MsgError(this, AppInfo.Name, "Error saving: " + fileName + "\n" + exc.Message );
 			}
 
 			return;
@@ -279,7 +274,7 @@ namespace Testy.Gui {
 
 			if ( this.Document != null )
 			{
-				bool fileNameChosen = Util.DlgSave(
+				bool fileNameChosen = GtkUtil.Util.DlgSave(
 					"Save test as...",
 					"Save test as...",
 					this,
@@ -293,7 +288,8 @@ namespace Testy.Gui {
 					fileName = fileNameAux;
 
 					// Change extension
-					if ( !fileName.EndsWith( Transformer.TestFileExt ) ) {
+					if ( !fileName.EndsWith( Transformer.TestFileExt, StringComparison.InvariantCulture ) )
+					{
 						fileName = System.IO.Path.ChangeExtension( fileName, Transformer.TestFileExt );
 					}
 
@@ -318,7 +314,7 @@ namespace Testy.Gui {
 			try {
 				string fileNameAux = fileName;
 
-				bool fileNameChosen = Util.DlgOpen(
+				bool fileNameChosen = GtkUtil.Util.DlgOpen(
 					"Load test",
 					"Load test",
 					this,
@@ -338,7 +334,7 @@ namespace Testy.Gui {
 				}
 			} catch(Exception exc)
 			{
-				Util.MsgError(this, AppInfo.Name, "Error loading: " + fileName + "\n" + exc.Message );
+				GtkUtil.Util.MsgError(this, AppInfo.Name, "Error loading: " + fileName + "\n" + exc.Message );
 				this.Document = null;
 				this.DeactivateGui();
 			}
@@ -349,7 +345,12 @@ namespace Testy.Gui {
 		/// </summary>
 		private void Close()
 		{
-			this.Save();
+			if ( this.Document != null
+			  && GtkUtil.Util.Ask( this, AppInfo.Name, "Do you want to save: " + fileName ) )
+			{
+				this.Save();
+			}
+				
 			this.Document = null;
 			this.DeactivateGui();
 		}
@@ -364,7 +365,7 @@ namespace Testy.Gui {
 			aboutDlg.ProgramName = AppInfo.Name;
 			aboutDlg.Logo = this.Icon;
 			aboutDlg.Version = AppInfo.Version;
-			aboutDlg.Authors = new string[]{ AppInfo.Author };
+			aboutDlg.Authors = new []{ AppInfo.Author };
 			aboutDlg.Website = AppInfo.Website;
 			aboutDlg.Icon = this.Icon;
 			aboutDlg.License = "MIT";
@@ -384,7 +385,7 @@ namespace Testy.Gui {
 			var dlgTest = new DlgTakeTest( this, this.Document );
 			this.actTakeTest.Sensitive = false;
 			dlgTest.ShowAll();
-			Gtk.ResponseType result = (Gtk.ResponseType) dlgTest.Run();
+			var result = (Gtk.ResponseType) dlgTest.Run();
 
 			if ( result == Gtk.ResponseType.Ok ) {
 				this.Show();
@@ -406,9 +407,9 @@ namespace Testy.Gui {
 		{
 			if ( this.Document != null ) {
 				var dlg = new DlgExport( this.Document, this.fileName, this );
-				bool chosen = ( (Gtk.ResponseType) dlg.Run() == Gtk.ResponseType.Ok );
+				bool chosen = ( (Gtk.ResponseType) dlg.Run() != Gtk.ResponseType.Close );
 
-				if ( chosen ) {
+				while ( chosen ) {
 					Document doc = this.Document;
 
 					if ( dlg.NumQuestions < this.Document.CountQuestions ) {
@@ -416,20 +417,18 @@ namespace Testy.Gui {
 						doc = new Document();
 						doc.Clear();
 						var questions = this.Document.Questions;
-						var seq = new RandomSequence( this.Document.CountQuestions ).Sequence;
+						int numQuestions = Math.Min( questions.Count, dlg.NumQuestions );
+						var seq = new RandomSequence( numQuestions ).Sequence;
 						for(int i = 0; i < seq.Count; ++i) {
 							doc.Add( questions[ seq[ i ] ] );
-
-							if ( i >= dlg.NumQuestions ) {
-								break;
-							}
 						}
 					}
 
 					this.SetStatus( "Saving..." );
 					doc.Save( dlg.OutputFormat, dlg.FileName );
 					this.SetStatus();
-					Util.MsgInfo( this, AppInfo.Name, "File generated: " + dlg.FileName );
+					GtkUtil.Util.MsgInfo( this, AppInfo.Name, "File generated: " + dlg.FileName );
+					chosen = ( (Gtk.ResponseType) dlg.Run() != Gtk.ResponseType.Close );
 				}
 
 				dlg.Destroy();
@@ -450,7 +449,7 @@ namespace Testy.Gui {
 				this.StoreQuestionText();
 
 				// Add one more question
-				this.Document.Add( "Q?: " + ( this.Document.CountQuestions + 1 ).ToString() );
+				this.Document.Add( "Q?: " + ( this.Document.CountQuestions + 1 ) );
 
 				// Update tree view for document
 				int numRow = this.tvwDocument.NumRows;
@@ -476,7 +475,7 @@ namespace Testy.Gui {
 
 				if ( this.CurrentQuestion >= 0 ) {
 					var currentq = this.Document[ this.CurrentQuestion ];
-					var answerText = "A: " + ( currentq.CountAnswers +1).ToString();
+					var answerText = "A: " + ( currentq.CountAnswers + 1 );
 
 					currentq.AddAnswer( answerText );
 					this.UpdateViewAt( this.CurrentQuestion );
@@ -661,12 +660,12 @@ namespace Testy.Gui {
 
 		private void ReportNoRow(int index)
 		{
-			Util.MsgError( this, AppInfo.Name, "No row at: " + index.ToString() );
+			GtkUtil.Util.MsgError( this, AppInfo.Name, "No row at: " + index );
 		}
 
 		private void ReportNoDocument()
 		{
-			Util.MsgError( this, AppInfo.Name, "No document available." );
+			GtkUtil.Util.MsgError( this, AppInfo.Name, "No document available." );
 		}
 
 		private void SetGuiActive(bool active = true)
@@ -716,7 +715,7 @@ namespace Testy.Gui {
 		{
 			this.sbStatus.Push( 0, statusMsg );
 			this.UpdateNumberOfQuestions();
-			Util.UpdateUI();
+			GtkUtil.Util.UpdateUI();
 		}
 
 		/// <summary>
@@ -742,7 +741,7 @@ namespace Testy.Gui {
 			}
 
 			try {
-				bool fileNameChosen = Util.DlgOpen(
+				bool fileNameChosen = GtkUtil.Util.DlgOpen(
 					"Append test",
 					"Append test",
 					this,
@@ -759,12 +758,12 @@ namespace Testy.Gui {
 					} catch(Exception exc) {
 						this.Document = null;
 						this.DeactivateGui();
-						Util.MsgError( this, AppInfo.Name, exc.Message );
+						GtkUtil.Util.MsgError( this, AppInfo.Name, exc.Message );
 					}
 				}
 			} catch(Exception exc)
 			{
-				Util.MsgError(this, AppInfo.Name, "Error loading: " + fileName + "\n" + exc.Message );
+				GtkUtil.Util.MsgError(this, AppInfo.Name, "Error loading: " + fileName + "\n" + exc.Message );
 			}
 
 			this.UpdateView();
@@ -786,7 +785,7 @@ namespace Testy.Gui {
 			try {
 				string fileNameAux = this.fileName;
 
-				bool fileNameChosen = Util.DlgOpen(
+				bool fileNameChosen = GtkUtil.Util.DlgOpen(
 					"Append test",
 					"Append test",
 					this,
@@ -805,7 +804,7 @@ namespace Testy.Gui {
 				}
 			} catch(Exception exc)
 			{
-				Util.MsgError(this, AppInfo.Name, "Error loading: " + fileName + "\n" + exc.Message );
+				GtkUtil.Util.MsgError(this, AppInfo.Name, "Error loading: " + fileName + "\n" + exc.Message );
 			}
 
 			End:
@@ -819,9 +818,21 @@ namespace Testy.Gui {
 			if ( this.Document == null ) {
 				this.ReportNoDocument();
 			} else {
-				int numQuestion = this.GetQuestionBeingEdited();
-
 				this.Document.Shuffle();
+				this.UpdateView();
+			}
+
+			return;
+		}
+
+		/// <summary>
+		/// Find in this test.
+		/// </summary>
+		private void Find() {
+			if ( this.Document == null ) {
+				this.ReportNoDocument();
+			} else {
+				//this.Document.Shuffle();
 				this.UpdateView();
 			}
 
@@ -856,13 +867,13 @@ namespace Testy.Gui {
 		/// <summary>
 		/// Triggered when the user changes the correct answer for a given question.
 		/// </summary>
-		private void OnAnswerChosen(object o, Gtk.RowActivatedArgs args)
+		private void OnAnswerChosen()
 		{
 			int answerNumber;
 			int col;
 
 			this.tvwAnswers.GetCurrentCell( out answerNumber, out col );
-			this.spNumberValidAnswer.Value = answerNumber +1;
+			this.spNumberValidAnswer.Value = answerNumber + 1;
 		}
 
 		public Document Document {
@@ -879,8 +890,8 @@ namespace Testy.Gui {
 			get; set;
 		}
 
-		private TableTextView tvwDocument;
-		private TableTextView tvwAnswers;
+		private GtkUtil.TableTextView tvwDocument;
+		private GtkUtil.TableTextView tvwAnswers;
 		private string fileName;
 		private bool nameGiven;
 		private static int numberOfDocuments = 1;

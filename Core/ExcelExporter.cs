@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Xml;
 
 namespace Testy.Core {
@@ -24,7 +23,6 @@ namespace Testy.Core {
 
 		public override void Export()
 		{
-			string contents;
 			XmlDocument doc = this.ToExcel();
 
 			// Convert Xml Document to string

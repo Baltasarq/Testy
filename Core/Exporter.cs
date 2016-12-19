@@ -10,7 +10,8 @@ namespace Testy.Core {
 		/// Initializes a new instance of the <see cref="Testy.Core.Exporter"/> class.
 		/// </summary>
 		/// <param name="doc">The Document object to export.</param>
-		public Exporter(Document doc, string fileName)
+		/// <param name="fileName">The name of the file to export to.</param>
+		protected Exporter(Document doc, string fileName)
 			:base( fileName )
 		{
 			this.doc = doc;
@@ -64,8 +65,6 @@ namespace Testy.Core {
 				else {
 					throw new ArgumentException( "unrecognized format option" );
 				}
-			} catch(Exception) {
-				throw;
 			} finally {
 				if ( exporter != null ) {
 					exporter.Dispose();
@@ -119,8 +118,7 @@ namespace Testy.Core {
 		/// </param>
 		protected static void SaveTextFile(string fileName, string contents)
 		{
-			using (StreamWriter outfile = new StreamWriter( fileName ) )
-			{
+			using (var outfile = new StreamWriter( fileName ) ) {
 				outfile.Write( contents );
 			}
 		}

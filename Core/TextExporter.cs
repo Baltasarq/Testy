@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using System.IO;
 
 namespace Testy.Core {
 	/// <summary>
@@ -24,11 +23,11 @@ namespace Testy.Core {
 		}
 
 		private string DrawAnswersBox() {
-			StringBuilder toret = new StringBuilder();
+			var toret = new StringBuilder();
 			int numAnswers = this.FindMaxAnswers();
 			int numQuestions = this.Document.CountQuestions;
 			int numQuestionsDrawn = 0;
-			int MaxQuestionsPerLine = 25;
+			const int MaxQuestionsPerLine = 25;
 			string horizontalLine = new string( '-', ( 3 * MaxQuestionsPerLine ) + 4 );
 			string doubleHorizontalLine = new string( '=', ( 3 * MaxQuestionsPerLine ) + 4 );
 
@@ -68,11 +67,11 @@ namespace Testy.Core {
 
 		private string DrawSolutionBox() {
 			var questions = this.Document.Questions;
-			StringBuilder toret = new StringBuilder();
+			var toret = new StringBuilder();
 			int numAnswers = this.FindMaxAnswers();
 			int numQuestions = questions.Count;
 			int numQuestionsDrawn = 0;
-			int MaxQuestionsPerLine = 25;
+			const int MaxQuestionsPerLine = 25;
 			string horizontalLine = new string( '-', ( 3 * MaxQuestionsPerLine ) + 4 );
 			string doubleHorizontalLine = new string( '=', ( 3 * MaxQuestionsPerLine ) + 4 );
 

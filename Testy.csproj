@@ -49,9 +49,6 @@
       <Package>gtk-sharp-2.0</Package>
     </Reference>
     <Reference Include="System.Xml" />
-    <Reference Include="GtkUtil">
-      <HintPath>..\CsMyLib\GtkUtil\bin\Release\GtkUtil.dll</HintPath>
-    </Reference>
     <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <Package>gtk-sharp-2.0</Package>
     </Reference>
@@ -59,6 +56,22 @@
   <ItemGroup>
     <EmbeddedResource Include="Res\testy.ico" />
     <EmbeddedResource Include="Res\testy.png" />
+    <EmbeddedResource Include="Res\about.png" />
+    <EmbeddedResource Include="Res\add.png" />
+    <EmbeddedResource Include="Res\close.png" />
+    <EmbeddedResource Include="Res\exit.png" />
+    <EmbeddedResource Include="Res\export.png" />
+    <EmbeddedResource Include="Res\find.png" />
+    <EmbeddedResource Include="Res\import.png" />
+    <EmbeddedResource Include="Res\new.png" />
+    <EmbeddedResource Include="Res\open.png" />
+    <EmbeddedResource Include="Res\remove.png" />
+    <EmbeddedResource Include="Res\save.png" />
+    <EmbeddedResource Include="Res\play.png" />
+    <EmbeddedResource Include="Res\shuffle.png" />
+    <EmbeddedResource Include="Res\check.png" />
+    <EmbeddedResource Include="Res\next.png" />
+    <EmbeddedResource Include="Res\previous.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gui\Main.cs" />
@@ -96,4 +109,10 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <ProjectReference Include="..\CsMyLib\GtkUtil\GtkUtil.csproj">
+      <Project>{990E54DA-96E8-412B-8A4D-E79BDCA5F280}</Project>
+      <Name>GtkUtil</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

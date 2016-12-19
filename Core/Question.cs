@@ -1,6 +1,5 @@
 using System;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -49,7 +48,7 @@ namespace Testy.Core {
 		public void AddAnswer(string answer)
 		{
 			if ( this.CountAnswers >= MaxAnswers ) {
-				throw new Exception( "answers above limit of: " + MaxAnswers.ToString() );
+				throw new Exception( "answers above limit of: " + MaxAnswers );
 			}
 			
 			this.answers.Add( answer.Trim() );
@@ -144,13 +143,17 @@ namespace Testy.Core {
 		/// </exception>
 		public string GetAnswer(int index)
 		{
+			string toret;
+
 			if ( index >= 0
 			  && index < this.answers.Count )
 			{
-				return this.answers[ index ];
+				toret = this.answers[ index ];
 			} else {
 				throw CreateInvalidArgumentIndexException( index );
 			}
+
+			return toret;
 		}
 
 		/// <summary>
@@ -243,7 +246,7 @@ namespace Testy.Core {
 		protected ArgumentException CreateInvalidArgumentIndexException(int index)
 		{
 			return new ArgumentException(
-				"invalid index " + index.ToString()
+				"invalid index " + index
 				+ "in answers for question: '" + this.Text + '\''
 			);
 		}

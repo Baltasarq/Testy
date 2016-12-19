@@ -6,7 +6,7 @@ namespace Testy.Core {
 	/// Base class for all importers
 	/// </summary>
 	public abstract class Importer: Transformer, IDisposable {
-		public Importer(string fileName)
+		protected Importer(string fileName)
 			:base( fileName )
 		{
 			this.reader = new StreamReader( this.FileName );
@@ -42,8 +42,6 @@ namespace Testy.Core {
 				} else {
 					throw new ArgumentException( "unrecognized format option" );
 				}
-			} catch(Exception) {
-				throw;
 			} finally {
 				if ( importer != null ) {
 					importer.Dispose();

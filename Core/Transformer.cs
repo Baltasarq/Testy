@@ -19,10 +19,10 @@ namespace Testy.Core {
 
 		public enum Format { Text, Html, Csv, Excel, Xml };
 		public static ReadOnlyCollection<string> FormatExt = new ReadOnlyCollection<string>(
-			new string[]{ ".txt", ".html", ".csv", ".xls", TestFileExt }
+			new []{ ".txt", ".html", ".csv", ".xls", TestFileExt }
 		);
 
-		public Transformer(string fileName)
+		protected Transformer(string fileName)
 		{
 			this.FileName = fileName;
 		}
@@ -32,15 +32,9 @@ namespace Testy.Core {
 		/// </summary>
 		/// <value>The name of the file.</value>
 		public string FileName {
-			get {
-				return this.fileName;
-			}
-			protected set {
-				this.fileName = value;
-			}
+			get;
+			protected set;
 		}
-
-		private string fileName;
 	}
 }
 

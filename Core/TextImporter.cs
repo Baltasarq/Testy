@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace Testy.Core {
+﻿namespace Testy.Core {
 	/// <summary>
 	/// Imports a test from plain text.
 	/// Format:
@@ -23,7 +20,7 @@ namespace Testy.Core {
 		/// </summary>
 		/// <returns><c>true</c> if s is a question; otherwise, <c>false</c>.</returns>
 		/// <param name="s">The line to check. It is modified if it is a question.</param>
-		private bool IsQuestion(ref string s)
+		private static bool IsQuestion(ref string s)
 		{
 			bool toret = false;
 			int pos = 0;
@@ -48,9 +45,9 @@ namespace Testy.Core {
 		/// </summary>
 		/// <returns><c>true</c> if the parameter is an answer; otherwise, <c>false</c>.</returns>
 		/// <param name="s">The line to check. This line is modified it is an answer.</param>
-		private bool IsAnswer(ref string s)
+		private static bool IsAnswer(ref string s)
 		{
-			bool toret = false;
+			bool toret;
 
 			if ( s[ 0 ] == '-' ) {
 				toret = true;
@@ -69,7 +66,7 @@ namespace Testy.Core {
 		{
 			var toret = new Document();
 			Question q = null;
-			string line = "";
+			string line;
 
 			toret.Clear();
 			line = this.ReadLine();
@@ -77,7 +74,7 @@ namespace Testy.Core {
 				line = line.Trim();
 
 				if ( line.Length > 0 ) {
-					if ( this.IsQuestion( ref line ) ) {
+					if ( IsQuestion( ref line ) ) {
 						if ( q != null ) {
 							toret.Add( q );
 						}
@@ -86,7 +83,7 @@ namespace Testy.Core {
 						q.ClearAnswers();
 					}
 					else
-					if ( this.IsAnswer( ref line ) ) {
+					if ( IsAnswer( ref line ) ) {
 						q.AddAnswer( line );
 					}
 				}

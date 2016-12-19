@@ -1,67 +1,137 @@
 ﻿using System;
-using System.IO;
+using Atk;
+using Gdk;
 
 namespace Testy.Gui {
 	public partial class MainWindow: Gtk.Window {
 		private void BuildIcons() {
 			try {
 				this.iconTesty = Gdk.Pixbuf.LoadFromResource( "Testy.Res.testy.png" );
+				this.iconAbout = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.about.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-about", 32, this.iconAbout );
+
+				this.iconAdd = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.add.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-add", 32, this.iconAdd );
+
+				this.iconClose = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.close.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-close", 32, this.iconClose );
+
+				this.iconExit = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.exit.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-exit", 32, this.iconExit );
+
+				this.iconExport = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.export.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-export", 32, this.iconExport );
+
+				this.iconFind = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.find.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-find", 32, this.iconFind );
+
+				this.iconImport = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.import.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-import", 32, this.iconImport );
+
+				this.iconNew = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.new.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-new", 32, this.iconNew );
+
+				this.iconOpen = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.open.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-open", 32, this.iconOpen );
+
+				this.iconRemove = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.remove.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-remove", 32, this.iconRemove );
+
+				this.iconSave = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.save.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-save", 32, this.iconSave );
+
+				this.iconPlay = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.play.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-play", 32, this.iconPlay );
+
+				this.iconShuffle = new Gdk.Pixbuf(
+					System.Reflection.Assembly.GetEntryAssembly(),
+					"Testy.Res.shuffle.png", 32, 32 );
+				Gtk.IconTheme.AddBuiltinIcon( "tsty-shuffle", 32, this.iconShuffle );
 			} catch(Exception) {
 				this.iconTesty = null;
 			}
 		}
 
-		private void BuildActions() {
-			this.actImport = new Gtk.Action( "import", "_Import", "import questions in text file", Gtk.Stock.Convert );
+		private void BuildActions()
+		{
+			this.actImport = new Gtk.Action( "import", "_Import", "import questions in text file", "import" ) { IconName = "tsty-import" };
 			this.actImport.Activated += (sender, e) => this.Import();
 
-			this.actNew = new Gtk.Action( "new", "_New", "new test", Gtk.Stock.New );
+			this.actFind = new Gtk.Action( "find", "_Find", "find in test", "find" ) { IconName = "tsty-find" };
+			this.actFind.Activated += (sender, e) => this.Find();
+
+			this.actNew = new Gtk.Action( "new", "_New", "new test", "new" ) { IconName = "tsty-new" };
 			this.actNew.Activated += (sender, e) => this.New();
 
-			this.actOpen = new Gtk.Action( "open", "_Open", "open test", Gtk.Stock.Open );
+			this.actOpen = new Gtk.Action( "open", "_Open", "open test", "open" ) { IconName = "tsty-open" };
 			this.actOpen.Activated += (sender, e) => this.Open();
 
-			this.actAppend = new Gtk.Action( "append", "_Append", "append another test questions", Gtk.Stock.Apply );
+			this.actAppend = new Gtk.Action( "append", "_Append", "append another test questions", "append" ) { IconName = "tsty-add" };
 			this.actAppend.Activated += (sender, e) => this.Append();
 
-			this.actSave = new Gtk.Action( "save", "_Save", "save test", Gtk.Stock.Save );
+			this.actSave = new Gtk.Action( "save", "_Save", "save test", "save" ) { IconName = "tsty-save" };
 			this.actSave.Activated += (sender, e) => this.Save();
 
-			this.actSaveAs = new Gtk.Action( "save-as", "Sa_ve as...", "save test as...", Gtk.Stock.SaveAs );
+			this.actSaveAs = new Gtk.Action( "save-as", "Sa_ve as...", "save test as...", "save-as" ) { IconName = "tsty-save" };
 			this.actSaveAs.Activated += (sender, e) => this.SaveAs();
 
-			this.actExport = new Gtk.Action( "export", "_Export", "export test as...", Gtk.Stock.Convert );
+			this.actExport = new Gtk.Action( "export", "_Export", "export test as...", "export"  ) { IconName = "tsty-export" };
 			this.actExport.Activated += (sender, e) => this.Export();
 
-			this.actClose = new Gtk.Action( "close", "_Close", "close test", Gtk.Stock.Close );
+			this.actClose = new Gtk.Action( "close", "_Close", "close test", "close" ) { IconName = "tsty-close" };
 			this.actClose.Activated += (sender, e) => this.Close();
 
-			this.actQuit = new Gtk.Action( "quit", "_Quit", "quit", Gtk.Stock.Quit );
+			this.actQuit = new Gtk.Action( "quit", "_Quit", "quit", "quit"  ) { IconName = "tsty-exit" };
 			this.actQuit.Activated += (sender, e) => this.Quit();
 
-			this.actAddQuestion = new Gtk.Action( "add-question", "_Add question", "add question", Gtk.Stock.Add );
+			this.actAddQuestion = new Gtk.Action( "add-question", "_Add question", "add question", "add"  ) { IconName = "tsty-add" };
 			this.actAddQuestion.Activated += (sender, e) => this.AddQuestion();
 
-			this.actRemoveQuestion = new Gtk.Action( "remove-question", "_Remove question", "remove question", Gtk.Stock.Remove );
+			this.actRemoveQuestion = new Gtk.Action( "remove-question", "_Remove question", "remove question", "remove-question" ) { IconName = "tsty-remove" };
 			this.actRemoveQuestion.Activated += (sender, e) => this.RemoveQuestion();
 
-			this.actAddAnswer = new Gtk.Action( "add-answer", "Add a_nswer", "add answer", Gtk.Stock.Add );
+			this.actAddAnswer = new Gtk.Action( "add-answer", "Add a_nswer", "add answer", "add-answer" ) { IconName = "tsty-add" };
 			this.actAddAnswer.Activated += (sender, e) => this.AddAnswer();
 
-			this.actRemoveAnswer = new Gtk.Action( "remove-answer", "Remove ans_wer", "remove answer", Gtk.Stock.Remove );
+			this.actRemoveAnswer = new Gtk.Action( "remove-answer", "Remove ans_wer", "remove answer", "remove-answer" ) { IconName = "tsty-remove" };
 			this.actRemoveAnswer.Activated += (sender, e) => this.RemoveAnswer();
 
-			this.actShuffle = new Gtk.Action( "shuffle", "_Shuffle", "Shuffle questions", Gtk.Stock.Refresh );
+			this.actShuffle = new Gtk.Action( "shuffle", "_Shuffle", "Shuffle questions", "shuffle" ) { IconName = "tsty-shuffle" };
 			this.actShuffle.Activated += (sender, e) => this.Shuffle();
 
-			this.actTakeTest = new Gtk.Action( "take-test", "_Take test", "take test", Gtk.Stock.MediaPlay );
+			this.actTakeTest = new Gtk.Action( "take-test", "_Take test", "take test", "take-test" ) { IconName = "tsty-play" };
 			this.actTakeTest.Activated += (sender, e) => this.TakeTest();
 
-			this.actAbout = new Gtk.Action( "about", "_About...", "about...", Gtk.Stock.About );
+			this.actAbout = new Gtk.Action( "about", "_About...", "about...", "about" ) { IconName = "tsty-about" };
 			this.actAbout.Activated += (sender, e) => this.About();
 		}
 
-		private void BuildMenu() {
+		private void BuildMenu()
+		{
 			var accel = new Gtk.AccelGroup();
 			this.mbMainMenu = new Gtk.MenuBar();
 
@@ -151,7 +221,7 @@ namespace Testy.Gui {
 
 			// Text view for the document
 			var swScrollText = new Gtk.ScrolledWindow();
-			this.txtDocument = new Gtk.TextView() { Editable = false };
+			this.txtDocument = new Gtk.TextView { Editable = false };
 			swScrollText.AddWithViewport( this.txtDocument );
 			this.txtDocument.FocusOutEvent += (o, args) => this.StoreQuestionText();
 
@@ -174,7 +244,7 @@ namespace Testy.Gui {
 			vBox.PackStart( frmQuestion, false, false, 5 );
 
 			// Frame answers
-			var bttAnswers = new Gtk.VButtonBox();
+			var bttAnswers = new Gtk.HButtonBox();
 			var vBoxAnswers = new Gtk.VBox( false, 5 );
 			var frmAnswer = new Gtk.Frame( "Answer" );
 			var hBoxAnswers = new Gtk.HBox( false, 5 );
@@ -183,21 +253,21 @@ namespace Testy.Gui {
 			( (Gtk.Label) frmAnswer.LabelWidget ).Markup = "<b>Answer</b>";
 			this.tvAnswers = new Gtk.TreeView();
 			swScrolledAnswers.Add( this.tvAnswers );
-			this.btAddAnswer = new Gtk.Button( Gtk.Stock.Add );
+			this.btAddAnswer = new Gtk.Button( new Gtk.Image( this.iconAdd.ScaleSimple( 16, 16, InterpType.Bilinear ) ) );
 			this.btAddAnswer.Clicked += (sender, e) => this.AddAnswer();
-			this.btRemoveAnswer = new Gtk.Button( Gtk.Stock.Remove );
+			this.btRemoveAnswer = new Gtk.Button( new Gtk.Image( this.iconRemove.ScaleSimple( 16, 16, InterpType.Bilinear ) ) );
 			this.btRemoveAnswer.Clicked += (sender, e) => this.RemoveAnswer();
 			bttAnswers.Add( this.btAddAnswer );
 			bttAnswers.Add( this.btRemoveAnswer );
 			bttAnswers.Layout = Gtk.ButtonBoxStyle.Center;
 			bttAnswers.Spacing = 20;
 			hBoxAnswers.PackStart( swScrolledAnswers, true, true, 5 );
-			hBoxAnswers.PackStart( bttAnswers, false, false, 5 );
 			vBoxAnswers.PackStart( hBoxAnswers, true, true, 5 );
 			this.spNumberValidAnswer = new Gtk.SpinButton( 1, 20, 1 );
 			this.spNumberValidAnswer.ValueChanged += (o, args) => this.OnCorrectAnswerChanged();
 			hBoxCorrect.PackStart( new Gtk.Label( "Correct answer:" ), false, false, 5 );
 			hBoxCorrect.PackStart( this.spNumberValidAnswer, false, false, 5 );
+			hBoxCorrect.PackEnd( bttAnswers, false, false, 5 );
 			vBoxAnswers.PackStart( hBoxCorrect, false, false, 5 );
 			frmAnswer.Add( vBoxAnswers );
 			vBox.PackStart( frmAnswer, true, true, 5 );
@@ -230,17 +300,30 @@ namespace Testy.Gui {
 			// Prepare
 			this.SetGeometryHints(
 				this,
-				new Gdk.Geometry() {
-					MinWidth = 640,
-					MinHeight = 480 },
+				new Gdk.Geometry { MinWidth = 640, MinHeight = 480 },
 				Gdk.WindowHints.MinSize
 			);
 			this.DeleteEvent += (o, args) => this.OnTerminateWindow( args );
 			this.Icon = this.iconTesty;
 		}
 
+		private Gdk.Pixbuf iconAbout;
+		private Gdk.Pixbuf iconImport;
+		private Gdk.Pixbuf iconExport;
+		private Gdk.Pixbuf iconFind;
+		private Gdk.Pixbuf iconNew;
+		private Gdk.Pixbuf iconOpen;
+		private Gdk.Pixbuf iconAdd;
+		private Gdk.Pixbuf iconPlay;
+		private Gdk.Pixbuf iconShuffle;
+		private Gdk.Pixbuf iconRemove;
+		private Gdk.Pixbuf iconSave;
+		private Gdk.Pixbuf iconClose;
+		private Gdk.Pixbuf iconExit;
 		private Gdk.Pixbuf iconTesty;
+
 		private Gtk.Action actImport;
+		private Gtk.Action actFind;
 		private Gtk.Action actNew;
 		private Gtk.Action actOpen;
 		private Gtk.Action actAppend;

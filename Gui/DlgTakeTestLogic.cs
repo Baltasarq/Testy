@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using Testy.Core;
 
 namespace Testy.Gui {
@@ -18,10 +17,10 @@ namespace Testy.Gui {
 			}
 
 			// Prepare combobox of question numbers
-			var model = new Gtk.ListStore( new Type[] { typeof( string ) } );
+			var model = new Gtk.ListStore( new [] { typeof( string ) } );
 
 			for(int i = 0; i < this.Document.CountQuestions; ++i) {
-				model.AppendValues( new string[]{ ( i +1 ).ToString() } );
+				model.AppendValues( new []{ ( i +1 ).ToString() } );
 			}
 
 			// Last fixes
@@ -31,10 +30,10 @@ namespace Testy.Gui {
 			this.lblCorrect.Hide();
 			this.cbAnswers.Show();
 			this.cbAnswers.Sensitive = true;
-			this.Go();
 		}
 
-		private void EnableQuestionControls() {
+		private void EnableQuestionControls()
+		{
 			this.cbQuestionNumber.Active = this.QuestionNumber;
 			this.actPrev.Sensitive = ( this.QuestionNumber > 0 );
 			this.actNext.Sensitive = ( this.QuestionNumber < ( this.Document.CountQuestions - 1 ) );
@@ -49,15 +48,18 @@ namespace Testy.Gui {
 
 			this.EnableQuestionControls();
 
+			// Prepare question info
+			this.txtQuestion.Buffer.Text = question.Text;
+
 			// Prepare correction
 			if ( this.WorkMode == Mode.Correction ) {
 				if ( this.Answers[ qn ] == question.CorrectAnswer ) {
-					this.imgCorrection.SetFromStock( "gtk-yes", Gtk.IconSize.Dialog );
+					this.imgCorrection.Pixbuf = this.iconCheck.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear );
 					this.txtCorrection.Buffer.Text = "";
 					this.expCorrection.Hide();
 					this.VBox.SetChildPacking( this.hbxChkContainer, false, false, 5, Gtk.PackType.End );
 				} else {
-					this.imgCorrection.SetFromStock( "gtk-no", Gtk.IconSize.Dialog );
+					this.imgCorrection.Pixbuf = this.iconClose.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear );
 					this.expCorrection.Expanded = true;
 					var strCorrection = new StringBuilder();
 
@@ -68,9 +70,9 @@ namespace Testy.Gui {
 							prefix = 'X';
 						}
 						else
-							if ( i == question.CorrectAnswer ) {
-								prefix = '*';
-							}
+						if ( i == question.CorrectAnswer ) {
+							prefix = '*';
+						}
 
 						strCorrection.Append( '\n' );
 						strCorrection.Append( ' ' );
@@ -83,18 +85,17 @@ namespace Testy.Gui {
 					this.expCorrection.Show();
 					this.VBox.SetChildPacking( this.hbxChkContainer, true, true, 5, Gtk.PackType.End );
 				}
+			} else {
+				// Prepare answers
+				( (Gtk.ListStore) this.cbAnswers.Model ).Clear();
+				foreach(string answer in question.Answers) {
+					this.cbAnswers.AppendText( answer );
+				}
+
+				this.cbAnswers.Active = this.Answers[ qn ];
 			}
 
-			// Prepare question info
-			this.txtQuestion.Buffer.Text = question.Text;
-
-			// Prepare answers
-			this.cbAnswers.Clear();
-			foreach(var answer in question.Answers) {
-				this.cbAnswers.AppendText( answer );
-			}
-
-			this.cbAnswers.Active = this.Answers[ qn ];
+			return;
 		}
 
 		/// <summary>
@@ -118,8 +119,6 @@ namespace Testy.Gui {
 		/// </summary>
 		private void PreviousQuestion()
 		{
-			int MaxQuestions = this.Document.CountQuestions;
-
 			// Go backwards
 			--this.questionNumber;
 
@@ -167,8 +166,12 @@ namespace Testy.Gui {
 		/// </summary>
 		private void OnAnswerChanged()
 		{
-			if ( this.QuestionNumber > -1 ) {
-				this.Answers[ this.QuestionNumber ] = this.cbAnswers.Active;
+			int newAnswer = this.cbAnswers.Active;
+
+			if ( this.QuestionNumber > -1
+			  && newAnswer > -1 )
+			{
+				this.Answers[ this.QuestionNumber ] = newAnswer;
 			}
 		}
 
@@ -180,7 +183,7 @@ namespace Testy.Gui {
 			int numCorrect = 0;
 
 			// Prepare UI (first part)
-			this.Hide();
+			this.VBox.Hide();
 			this.workMode = Mode.Correction;
 			this.Title = "Correcting test: " + this.Document.Title;
 
@@ -194,12 +197,12 @@ namespace Testy.Gui {
 			}
 
 			// Build check framework
-			this.ShowAll();
 			this.BuildCheckFramework();
+			this.VBox.Show();
 
 			// Prepare UI
 			this.cbAnswers.Hide();
-			this.lblCorrect.Text = numCorrect.ToString() + " /";
+			this.lblCorrect.Text = numCorrect + " /";
 			this.questionNumber = 0;
 			this.Go();
 		}
