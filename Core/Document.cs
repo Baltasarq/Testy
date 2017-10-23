@@ -114,6 +114,15 @@ namespace Testy.Core {
 		{
 			this.questions.Add( q );
 		}
+
+		/// <summary>
+		/// Adds the given range of questions.
+		/// </summary>
+		/// <param name="vq">A collection of questions.</param>
+		public void AddRange(IEnumerable<Question> vq)
+		{
+			this.questions.AddRange( vq );
+		}
 		
 		public void RemoveAt(int index)
 		{
@@ -136,19 +145,6 @@ namespace Testy.Core {
 		private void AddDefaultQuestion()
 		{
 			this.Add( "Q?" );
-		}
-
-		/// <summary>
-		/// Appends the questions in the specified doc.
-		/// </summary>
-		/// <param name="doc">A Document object.</param>
-		public void Append(Document doc)
-		{
-			foreach (Question q in doc) {
-				this.Add( q );
-			}
-
-			return;
 		}
 
 		/// <summary>

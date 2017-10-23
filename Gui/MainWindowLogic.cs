@@ -1,8 +1,10 @@
-﻿using System;
-using Testy.Core;
-using System.Collections.ObjectModel;
+﻿namespace Testy.Gui {
+	using System;
+	using System.Linq;
+	using System.Collections.ObjectModel;
 
-namespace Testy.Gui {
+	using Core;
+
 	public partial class MainWindow {
 		public static ReadOnlyCollection<string> HeaderDocumentEn = new ReadOnlyCollection<string>(
 			new [] { "#", "Questions" }
@@ -36,10 +38,10 @@ namespace Testy.Gui {
 			this.tvwDocument.SetEditable( 1, false );
 			this.tvwAnswers  = new GtkUtil.TableTextView( this.tvAnswers, HeaderDocumentEn.Count );
 			this.tvwAnswers.Headers = HeaderAnswersEn;
-			this.tvwAnswers.tableChanged += this.OnAnswerChanged;
+			this.tvwAnswers.TableChanged += this.OnAnswerChanged;
 
 			// Prepare the txtDocument TextView
-			Pango.FontDescription font = new Pango.FontDescription();
+			var font = new Pango.FontDescription();
 			font.Family = "Monospace";
 			this.txtDocument.ModifyFont( font );
 		}
@@ -166,7 +168,7 @@ namespace Testy.Gui {
 		/// <summary>
 		/// Manages closing the application.
 		/// </summary>
-		private void OnTerminateWindow(Gtk.DeleteEventArgs args)
+		private void OnTerminateWindow(GLib.SignalArgs args)
 		{
 			this.Quit();
 			args.RetVal = true;
@@ -411,17 +413,14 @@ namespace Testy.Gui {
 
 				while ( chosen ) {
 					Document doc = this.Document;
+					int numQuestions = Math.Min( doc.CountQuestions, dlg.NumQuestions );
 
-					if ( dlg.NumQuestions < this.Document.CountQuestions ) {
-						// Create a new document
+					if ( numQuestions < this.Document.CountQuestions ) {
 						doc = new Document();
-						doc.Clear();
-						var questions = this.Document.Questions;
-						int numQuestions = Math.Min( questions.Count, dlg.NumQuestions );
-						var seq = new RandomSequence( numQuestions ).Sequence;
-						for(int i = 0; i < seq.Count; ++i) {
-							doc.Add( questions[ seq[ i ] ] );
-						}
+						doc.Clear();			// Erases the default question
+						this.Document.Shuffle();
+						doc.AddRange( this.Document.Questions.Take( numQuestions ) );
+						this.UpdateView();
 					}
 
 					this.SetStatus( "Saving..." );
@@ -564,10 +563,10 @@ namespace Testy.Gui {
 				this.SetStatus();
 			}
 			else
-				if ( this.nbDocPages.CurrentPage == 0 )
-				{
-					this.txtDocument.Buffer.Text = "...";
-				}
+			if ( this.nbDocPages.CurrentPage == 0 )
+			{
+				this.txtDocument.Buffer.Text = "...";
+			}
 		}
 
 		private void ActivateGui()
@@ -623,7 +622,6 @@ namespace Testy.Gui {
 		private void UpdateViewAt(int index)
 		{
 			if ( this.Document != null ) {
-
 				if ( index >= 0
 					&& index < this.Document.Questions.Count )
 				{
@@ -635,13 +633,13 @@ namespace Testy.Gui {
 					edQuestionText.Buffer.Text = q.Text;
 
 					// Add answers
-					tvAnswers.Hide();
-					tvwAnswers.RemoveAllRows();
+					this.tvAnswers.Hide();
+					this.tvwAnswers.RemoveAllRows();
 					for(int i = 0; i < answers.Count; ++i) {
-						tvwAnswers.AppendRow();
-						tvwAnswers.Set( i, 1, answers[ i ] );
+						this.tvwAnswers.AppendRow();
+						this.tvwAnswers.Set( i, 1, answers[ i ] );
 					}
-					tvAnswers.Show();
+					this.tvAnswers.Show();
 
 					// Configure correct answer spinbutton
 					this.spNumberValidAnswer.SetRange( 1, answers.Count );
@@ -796,7 +794,7 @@ namespace Testy.Gui {
 				if ( fileNameChosen ) {
 					// Append
 					using (Document extDoc = Document.Load( Transformer.Format.Xml, fileNameAux )) {
-						this.Document.Append( extDoc );
+						this.Document.AddRange( extDoc.Questions );
 					}
 
 					// Prepare UI

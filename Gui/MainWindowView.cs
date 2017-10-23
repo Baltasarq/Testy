@@ -1,10 +1,9 @@
 ﻿using System;
-using Atk;
-using Gdk;
 
 namespace Testy.Gui {
 	public partial class MainWindow: Gtk.Window {
-		private void BuildIcons() {
+		private void BuildIcons()
+        {
 			try {
 				this.iconTesty = Gdk.Pixbuf.LoadFromResource( "Testy.Res.testy.png" );
 				this.iconAbout = new Gdk.Pixbuf(
@@ -190,30 +189,35 @@ namespace Testy.Gui {
 			this.mbMainMenu.Add( miAbout );
 		}
 
-		private void BuildToolbar() {
-			this.tbToolbar = new Gtk.Toolbar();
+		private void BuildToolbar()
+        {
+            this.tbToolbar = new Gtk.Toolbar {
+                this.actNew.CreateToolItem (),
+                this.actOpen.CreateToolItem (),
+                this.actSave.CreateToolItem (),
+                this.actClose.CreateToolItem (),
+                new Gtk.SeparatorToolItem (),
+                this.actAddQuestion.CreateToolItem (),
+                this.actRemoveQuestion.CreateToolItem (),
+                new Gtk.SeparatorToolItem (),
+                this.actTakeTest.CreateToolItem ()
+            };
+        }
 
-			this.tbToolbar.Add( this.actNew.CreateToolItem() );
-			this.tbToolbar.Add( this.actOpen.CreateToolItem() );
-			this.tbToolbar.Add( this.actSave.CreateToolItem() );
-			this.tbToolbar.Add( this.actClose.CreateToolItem() );
-			this.tbToolbar.Add( new Gtk.SeparatorToolItem() );
-			this.tbToolbar.Add( this.actAddQuestion.CreateToolItem() );
-			this.tbToolbar.Add( this.actRemoveQuestion.CreateToolItem() );
-			this.tbToolbar.Add( new Gtk.SeparatorToolItem() );
-			this.tbToolbar.Add( this.actTakeTest.CreateToolItem() );
-		}
-
-		private void BuildStatusbar() {
+		private void BuildStatusbar()
+        {
 			this.sbStatus = new Gtk.Statusbar();
 
-			this.lblStatusNumber = new Gtk.Label( "0" );
-			this.lblStatusNumber.UseMarkup = true;
-			this.sbStatus.PackEnd( this.lblStatusNumber, false, false, 5 );
+            this.lblStatusNumber = new Gtk.Label( "0" ) {
+                UseMarkup = true
+            };
+            
+            this.sbStatus.PackEnd( this.lblStatusNumber, false, false, 5 );
 			this.sbStatus.Push( 0, "Ready" );
 		}
 
-		private void BuildNotebook() {
+		private void BuildNotebook()
+        {
 			var vBox = new Gtk.VBox( false, 5 );
 			var hBox = new Gtk.HPaned();
 			this.nbDocPages = new Gtk.Notebook();
@@ -221,7 +225,7 @@ namespace Testy.Gui {
 
 			// Text view for the document
 			var swScrollText = new Gtk.ScrolledWindow();
-			this.txtDocument = new Gtk.TextView { Editable = false };
+			this.txtDocument = new Gtk.TextView { Editable = false, WrapMode = Gtk.WrapMode.WordChar };
 			swScrollText.AddWithViewport( this.txtDocument );
 			this.txtDocument.FocusOutEvent += (o, args) => this.StoreQuestionText();
 
@@ -237,7 +241,7 @@ namespace Testy.Gui {
 			var frmQuestion = new Gtk.Frame( "Question" );
 			var swScrolledQuestion = new Gtk.ScrolledWindow();
 			( (Gtk.Label) frmQuestion.LabelWidget ).Markup = "<b>Question</b>";
-			this.edQuestionText = new Gtk.TextView();
+			this.edQuestionText = new Gtk.TextView { WrapMode = Gtk.WrapMode.WordChar };
 			this.edQuestionText.KeyReleaseEvent += (o, args) => this.OnQuestionTextChanged();
 			swScrolledQuestion.AddWithViewport( edQuestionText );
 			frmQuestion.Add( swScrolledQuestion );
@@ -253,9 +257,11 @@ namespace Testy.Gui {
 			( (Gtk.Label) frmAnswer.LabelWidget ).Markup = "<b>Answer</b>";
 			this.tvAnswers = new Gtk.TreeView();
 			swScrolledAnswers.Add( this.tvAnswers );
-			this.btAddAnswer = new Gtk.Button( new Gtk.Image( this.iconAdd.ScaleSimple( 16, 16, InterpType.Bilinear ) ) );
+			this.btAddAnswer = new Gtk.Button(
+				new Gtk.Image( this.iconAdd.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear ) ) );
 			this.btAddAnswer.Clicked += (sender, e) => this.AddAnswer();
-			this.btRemoveAnswer = new Gtk.Button( new Gtk.Image( this.iconRemove.ScaleSimple( 16, 16, InterpType.Bilinear ) ) );
+			this.btRemoveAnswer = new Gtk.Button(
+				new Gtk.Image( this.iconRemove.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear ) ) );
 			this.btRemoveAnswer.Clicked += (sender, e) => this.RemoveAnswer();
 			bttAnswers.Add( this.btAddAnswer );
 			bttAnswers.Add( this.btRemoveAnswer );
@@ -273,14 +279,15 @@ namespace Testy.Gui {
 			vBox.PackStart( frmAnswer, true, true, 5 );
 
 			// Layout
-			hBox.Pack1( frmTest, false, false );
+			hBox.Pack1( frmTest, true, true );
 			hBox.Pack2( vBox, false, false );
 			this.nbDocPages.AppendPage( hBox, new Gtk.Label( "Edit" ) );
 			this.nbDocPages.AppendPage( swScrollText, new Gtk.Label( "Document" ) );
 			this.nbDocPages.Page = 0;
 		}
 
-		private void Build() {
+		private void Build()
+        {
 			var vBox = new Gtk.VBox( false, 0 );
 
 			this.BuildIcons();
