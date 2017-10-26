@@ -1,10 +1,7 @@
-﻿using System.Text;
-using Testy.Core;
+﻿namespace Testy.Gui {
+    using Core;
 
-namespace Testy.Gui {
 	public partial class DlgTakeTest {
-		public enum Mode { Test, Correction };
-
 		/// <summary>
 		/// Init this instance.
 		/// </summary>
@@ -12,8 +9,8 @@ namespace Testy.Gui {
 		{
 			// Prepare vector of answers
 			this.answers = new int[ this.Document.CountQuestions ];
-			for(int i = 0; i < this.Answers.Length; ++i) {
-				this.Answers[ i ] = 0;
+			for(int i = 0; i < this.answers.Length; ++i) {
+				this.answers[ i ] = 0;
 			}
 
 			// Prepare combobox of question numbers
@@ -26,8 +23,7 @@ namespace Testy.Gui {
 			// Last fixes
 			this.cbQuestionNumber.Model = model;
 			this.cbQuestionNumber.Active = 0;            
-			this.questionNumber = 0;
-			this.lblCorrect.Hide();
+			this.QuestionNumber = 0;
 			this.cbAnswers.Show();
 			this.cbAnswers.Sensitive = true;
 		}
@@ -51,49 +47,13 @@ namespace Testy.Gui {
 			// Prepare question info
 			this.txtQuestion.Buffer.Text = question.Text;
 
-			// Prepare correction
-			if ( this.WorkMode == Mode.Correction ) {
-				if ( this.Answers[ qn ] == question.CorrectAnswer ) {
-					this.imgCorrection.Pixbuf = this.iconCheck.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear );
-					this.txtCorrection.Buffer.Text = "";
-					this.expCorrection.Hide();
-					this.VBox.SetChildPacking( this.hbxChkContainer, false, false, 5, Gtk.PackType.End );
-				} else {
-					this.imgCorrection.Pixbuf = this.iconClose.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear );
-					this.expCorrection.Expanded = true;
-					var strCorrection = new StringBuilder();
-
-					for(int i = 0; i < question.Answers.Count; ++i) {
-						char prefix = ' ';
-
-						if ( i == this.Answers[ qn ] ) {
-							prefix = 'X';
-						}
-						else
-						if ( i == question.CorrectAnswer ) {
-							prefix = '*';
-						}
-
-						strCorrection.Append( '\n' );
-						strCorrection.Append( ' ' );
-						strCorrection.Append( prefix );
-						strCorrection.Append( ' ' );
-						strCorrection.Append( question.Answers[ i ] );
-					}
-
-					this.txtCorrection.Buffer.Text = strCorrection.ToString();
-					this.expCorrection.Show();
-					this.VBox.SetChildPacking( this.hbxChkContainer, true, true, 5, Gtk.PackType.End );
-				}
-			} else {
-				// Prepare answers
-				( (Gtk.ListStore) this.cbAnswers.Model ).Clear();
-				foreach(string answer in question.Answers) {
-					this.cbAnswers.AppendText( answer );
-				}
-
-				this.cbAnswers.Active = this.Answers[ qn ];
+			// Prepare answers
+			( (Gtk.ListStore) this.cbAnswers.Model ).Clear();
+			foreach(string answer in question.Answers) {
+				this.cbAnswers.AppendText( answer );
 			}
+
+			this.cbAnswers.Active = this.answers[ qn ];
 
 			return;
 		}
@@ -105,12 +65,20 @@ namespace Testy.Gui {
 		{
 			this.Go( this.QuestionNumber );
 		}
+        
+        ///<summary>Closes the dialog for checking.</summary>
+        private void Check()
+        {
+            this.Hide();
+            this.Respond( Gtk.ResponseType.Ok );
+        }
 
 		/// <summary>
-		/// Quit this dialog.
+		/// Quit this dialog, called when the user presses exit.
 		/// </summary>
 		private void Quit()
 		{
+            this.Respond( Gtk.ResponseType.Close );
 			this.Hide();
 		}
 
@@ -120,10 +88,10 @@ namespace Testy.Gui {
 		private void PreviousQuestion()
 		{
 			// Go backwards
-			--this.questionNumber;
+			--this.QuestionNumber;
 
 			if ( this.QuestionNumber < 0 ) {
-				this.questionNumber = 0;
+				this.QuestionNumber = 0;
 			} else {
 				this.Go( this.QuestionNumber );
 			}
@@ -140,10 +108,10 @@ namespace Testy.Gui {
 			int MaxQuestions = this.Document.CountQuestions;
 
 			// Go forward
-			++this.questionNumber;
+			++this.QuestionNumber;
 
 			if ( this.QuestionNumber >= MaxQuestions ) {
-				this.questionNumber = MaxQuestions -1;
+				this.QuestionNumber = MaxQuestions -1;
 			} else {
 				this.Go( this.QuestionNumber );
 			}
@@ -157,7 +125,7 @@ namespace Testy.Gui {
 		/// </summary>
 		private void OnQuestionNumberChanged()
 		{
-			this.questionNumber = this.cbQuestionNumber.Active;
+			this.QuestionNumber = this.cbQuestionNumber.Active;
 			this.Go();
 		}
 
@@ -171,62 +139,28 @@ namespace Testy.Gui {
 			if ( this.QuestionNumber > -1
 			  && newAnswer > -1 )
 			{
-				this.Answers[ this.QuestionNumber ] = newAnswer;
+				this.answers[ this.QuestionNumber ] = newAnswer;
 			}
 		}
 
-		/// <summary>
-		/// Changes the UI in order to go for correction mode.
-		/// </summary>
-		public void SetCorrectionMode()
-		{
-			int numCorrect = 0;
-
-			// Prepare UI (first part)
-			this.VBox.Hide();
-			this.workMode = Mode.Correction;
-			this.Title = "Correcting test: " + this.Document.Title;
-
-			// Count correct answers
-			for(int i = 0; i < this.Document.CountQuestions; ++i) {
-				var question = this.Document.Questions[ i ];
-
-				if ( question.CorrectAnswer == this.Answers[ i ] ) {
-					++numCorrect;
-				}
-			}
-
-			// Build check framework
-			this.BuildCheckFramework();
-			this.VBox.Show();
-
-			// Prepare UI
-			this.cbAnswers.Hide();
-			this.lblCorrect.Text = numCorrect + " /";
-			this.questionNumber = 0;
-			this.Go();
-		}
-
-		public int[] Answers {
-			get { return this.answers; }
-		}
-
+        /// <summary>The <see cref="Document"/> this dialog acts upon.</summary>
 		public Document Document {
-			get { return this.doc; }
+			get; private set;
 		}
 
-		public Mode WorkMode {
-			get { return this.workMode; }
-		}
-
+        /// <summary>Gets the current question number.</summary>
 		public int QuestionNumber {
-			get { return this.questionNumber; }
+			get; private set;
 		}
+        
+        /// <summary>The answers given by the user.</summary>
+        /// <value>An int representing 0 for answer 'a', 1 for 'b'...</value>
+        public int[] Answers {
+            get {
+                return (int[]) this.answers.Clone();
+            }
+        }
 
-		private Document doc;
-		private int[] answers;
-		private Mode workMode;
-		private int questionNumber;
+        private int[] answers;
 	}
 }
-

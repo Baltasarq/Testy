@@ -207,34 +207,6 @@ namespace Testy.Core {
 			return toret.ToString();
 		}
 
-        /// <summary>
-        /// Generates a html version.
-        /// </summary>
-        /// <returns>
-        /// The html code in a string.
-        /// </returns>
-        public string ToHtml()
-        {
-            var toret = new StringBuilder();
-            
-            // Add the question's text
-            toret.Append( "<li>" );
-            toret.AppendLine( this.Text );
-            
-            // Add all the answers
-            for(int i = 0; i < this.CountAnswers; ++i) {
-                toret.Append( "<p>&nbsp;&nbsp;&nbsp;&nbsp;" );
-                toret.Append( (char) ( 'a' + i ) );
-                toret.Append( ") " );
-                toret.Append( this.GetAnswer( i ) );
-                toret.AppendLine( "</p>" );
-            }
-
-            toret.Append( "</li>" );
-            toret.AppendLine( "<p/>" );
-            return toret.ToString();
-        }
-		
 		/// <summary>
 		/// Creates the invalid argument index exception.
 		/// </summary>

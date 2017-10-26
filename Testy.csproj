@@ -53,6 +53,7 @@
       <Package>gtk-sharp-2.0</Package>
     </Reference>
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Res\testy.ico" />
@@ -96,6 +97,8 @@
     <Compile Include="Core\HtmlExporter.cs" />
     <Compile Include="Core\Transformer.cs" />
     <Compile Include="Core\RandomSequence.cs" />
+    <Compile Include="Gui\DlgCheckTestView.cs" />
+    <Compile Include="Gui\DlgCheckTestLogic.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

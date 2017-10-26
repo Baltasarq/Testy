@@ -211,31 +211,6 @@ namespace Testy.Core {
 			return toret.ToString();
 		}
 		
-        /// <summary>
-        /// Generates a html version.
-        /// </summary>
-        /// <returns>
-        /// The html code in a string.
-        /// </returns>
-        public string ToHtml()
-        {
-            var toret = new StringBuilder();
-
-            toret.AppendLine( "<h1>" + this.Title + "</h1>" );
-            toret.AppendLine( "<h2>" + this.Date.Date.ToShortDateString() + "</h2>" );
-            toret.AppendLine( "<p>" + this.Notes + "</p>" );
-            toret.AppendLine( "<ol>" );
-            
-            foreach (var q in this) {
-                toret.AppendLine( q.ToHtml() );
-            }
-
-            toret.AppendLine( "</ol>" );
-            return toret.ToString();
-        }
-		
-
-				
 		/// <summary>
 		/// Gets or sets the title of the document test.
 		/// </summary>

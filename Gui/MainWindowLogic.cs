@@ -31,18 +31,25 @@
 			this.Build();
 			this.DeactivateGui();
 
-			// Prepare tree views
-			this.tvwDocument = new GtkUtil.TableTextView( this.tvDocument, HeaderDocumentEn.Count );
-			this.tvwDocument.Headers = HeaderDocumentEn;
-			this.tvDocument.ButtonReleaseEvent += (sender, e) => this.OnQuestionFocusChangedTo();
-			this.tvwDocument.SetEditable( 1, false );
-			this.tvwAnswers  = new GtkUtil.TableTextView( this.tvAnswers, HeaderDocumentEn.Count );
-			this.tvwAnswers.Headers = HeaderAnswersEn;
-			this.tvwAnswers.TableChanged += this.OnAnswerChanged;
+            // Prepare document's tree view
+            this.tvwDocument =
+                new GtkUtil.TableTextView(this.tvDocument, HeaderDocumentEn.Count)
+            {
+                Headers = HeaderDocumentEn
+            };
+            this.tvwDocument.SetEditable( 1, false );
+            this.tvDocument.ButtonReleaseEvent += (sender, e) => this.OnQuestionFocusChangedTo();
+
+            // Prepare answer's tree view
+            this.tvwAnswers =
+                new GtkUtil.TableTextView(this.tvAnswers, HeaderDocumentEn.Count)
+            {
+                Headers = HeaderAnswersEn
+            };
+            this.tvwAnswers.TableChanged += this.OnAnswerChanged;
 
 			// Prepare the txtDocument TextView
-			var font = new Pango.FontDescription();
-			font.Family = "Monospace";
+			var font = new Pango.FontDescription{ Family = "Monospace" };
 			this.txtDocument.ModifyFont( font );
 		}
 
@@ -51,12 +58,9 @@
 		/// </summary>
 		private void OnQuestionFocusChangedTo()
 		{
-			int row;
-			int col;
+            this.tvwDocument.GetCurrentCell (out int row, out int col);
 
-			this.tvwDocument.GetCurrentCell( out row, out col );
-
-			if ( row >= 0
+            if ( row >= 0
 			  && row < this.Document.CountQuestions )
 			{
 				this.UpdateViewAt( row );
@@ -75,6 +79,7 @@
 			if ( questionNumber >= 0 ) {
 				var q = this.Document[ questionNumber ];
 				q.Text = this.edQuestionText.Buffer.Text;
+                this.tvwDocument.Set( questionNumber, 1, q.Text );
 			} else {
 				this.ReportNoRow( questionNumber );
 			}
@@ -362,19 +367,20 @@
 		/// </summary>
 		private void About()
 		{
-			var aboutDlg = new Gtk.AboutDialog();
+            var aboutDlg = new Gtk.AboutDialog () {
+                ProgramName = AppInfo.Name,
+                Logo = this.Icon,
+                Version = AppInfo.Version,
+                Authors = new [] { AppInfo.Author },
+                Website = AppInfo.Website,
+                Icon = this.Icon,
+                License = "MIT",
 
-			aboutDlg.ProgramName = AppInfo.Name;
-			aboutDlg.Logo = this.Icon;
-			aboutDlg.Version = AppInfo.Version;
-			aboutDlg.Authors = new []{ AppInfo.Author };
-			aboutDlg.Website = AppInfo.Website;
-			aboutDlg.Icon = this.Icon;
-			aboutDlg.License = "MIT";
-
-			aboutDlg.TransientFor = this;
-			aboutDlg.WindowPosition = Gtk.WindowPosition.CenterOnParent;
-			aboutDlg.Run();
+                TransientFor = this,
+                WindowPosition = Gtk.WindowPosition.CenterOnParent
+            };
+            
+            aboutDlg.Run();
 			aboutDlg.Destroy();
 		}
 
@@ -383,21 +389,22 @@
 		/// </summary>
 		private void TakeTest()
 		{
+            this.actTakeTest.Sensitive = false;
+            
 			// Show the test modal window
-			var dlgTest = new DlgTakeTest( this, this.Document );
-			this.actTakeTest.Sensitive = false;
-			dlgTest.ShowAll();
-			var result = (Gtk.ResponseType) dlgTest.Run();
+            using (var dlgTest = new DlgTakeTest( this, this.Document )) {         
+				var result = (Gtk.ResponseType) dlgTest.Run();
+	
+				if ( result == Gtk.ResponseType.Ok ) {
+                    using (var dlgChk =
+                        new DlgCheckTest( this, this.Document, dlgTest.Answers ))
+                    {
+                        dlgChk.Run();
+                    }
+                }
+            }
 
-			if ( result == Gtk.ResponseType.Ok ) {
-				this.Show();
-				dlgTest.SetCorrectionMode();
-				dlgTest.Run();
-			}
-
-			dlgTest.Destroy();
-			this.Show();
-			this.actTakeTest.Sensitive = true;
+            this.actTakeTest.Sensitive = true;
 			return;
 		}
 
@@ -525,8 +532,6 @@
 		private void RemoveAnswer()
 		{
 			int questionNumber = this.CurrentQuestion;
-			int answerNumber;
-			int col;
 
 			// Store the previous question text
 			this.StoreQuestionText();
@@ -534,7 +539,7 @@
 			if ( questionNumber >= 0 ) {
 				var q = this.Document[ questionNumber ];
 
-				this.tvwAnswers.GetCurrentCell( out answerNumber, out col );
+				this.tvwAnswers.GetCurrentCell( out int answerNumber, out int col );
 
 				if ( answerNumber >= 0
 					&& answerNumber < q.CountAnswers )
@@ -846,11 +851,10 @@
 		private int GetQuestionBeingEdited()
 		{
 			int row = -1;
-			int col;
 
 			if ( this.Document != null ) {
 				// Retrieve question being edited
-				this.tvwDocument.GetCurrentCell( out row, out col );
+				this.tvwDocument.GetCurrentCell( out row, out int col );
 
 				// Adjust upper limit
 				if ( row >= this.Document.CountQuestions ) {
@@ -867,10 +871,7 @@
 		/// </summary>
 		private void OnAnswerChosen()
 		{
-			int answerNumber;
-			int col;
-
-			this.tvwAnswers.GetCurrentCell( out answerNumber, out col );
+			this.tvwAnswers.GetCurrentCell( out int answerNumber, out int col );
 			this.spNumberValidAnswer.Value = answerNumber + 1;
 		}
 

@@ -215,19 +215,98 @@ namespace Testy.Gui {
             this.sbStatus.PackEnd( this.lblStatusNumber, false, false, 5 );
 			this.sbStatus.Push( 0, "Ready" );
 		}
+        
+        private Gtk.Frame BuildEditQuestionFrame()
+        {
+            var toret = new Gtk.Frame( "Question" );
+            
+            var swScrolledQuestion = new Gtk.ScrolledWindow();
+            ( (Gtk.Label) toret.LabelWidget ).Markup = "<b>Question</b>";
+            this.edQuestionText = new Gtk.TextView { WrapMode = Gtk.WrapMode.Word };
+            this.edQuestionText.KeyReleaseEvent += (o, args) => this.OnQuestionTextChanged();
+            this.edQuestionText.FocusOutEvent += (o, args) => this.OnQuestionTextChanged();
+            swScrolledQuestion.AddWithViewport( edQuestionText );
+            toret.Add( swScrolledQuestion );
+            
+            return toret;
+        }
+        
+        private Gtk.Frame BuildEditAnswersFrame()
+        {
+            // The treeview for answers
+            this.tvAnswers = new Gtk.TreeView();
+            var swScrolledAnswers = new Gtk.ScrolledWindow{ this.tvAnswers };
+
+            // Add correct answer spin button
+            this.spNumberValidAnswer = new Gtk.SpinButton( 1, 20, 1 );
+            this.spNumberValidAnswer.ValueChanged +=
+                                    (o, args) => this.OnCorrectAnswerChanged();
+
+            // Add answer button            
+            this.btAddAnswer = new Gtk.Button(
+                new Gtk.Image( this.iconAdd.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear ) ) );
+            this.btAddAnswer.Clicked += (sender, e) => this.AddAnswer();
+            
+            // Remove answer button
+            this.btRemoveAnswer = new Gtk.Button(
+                new Gtk.Image( this.iconRemove.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear ) ) );
+            this.btRemoveAnswer.Clicked += (sender, e) => this.RemoveAnswer();
+            
+            // Answers control buttons
+            var bttAnswers = new Gtk.HButtonBox{
+                Spacing = 20,
+                Layout = Gtk.ButtonBoxStyle.Center
+            };
+
+            bttAnswers.Add( this.btAddAnswer );
+            bttAnswers.Add( this.btRemoveAnswer );
+            
+            // Correct answer control
+            var hBoxCorrect = new Gtk.HBox( false, 5 );
+            hBoxCorrect.PackStart( new Gtk.Label( "Correct answer:" ), false, false, 5 );
+            hBoxCorrect.PackStart( this.spNumberValidAnswer, false, false, 5 );
+            hBoxCorrect.PackEnd( bttAnswers, false, false, 5 );
+
+            // Final layout
+            var vBoxAnswers = new Gtk.VBox( false, 5 );            
+            vBoxAnswers.PackStart( swScrolledAnswers, true, true, 5 );
+            vBoxAnswers.PackStart( hBoxCorrect, false, false, 5 );
+            
+            // Frame
+            var toret = new Gtk.Frame( "Answer" );
+            ( (Gtk.Label) toret.LabelWidget ).Markup = "<b>Answer</b>";
+            toret.Add( vBoxAnswers );
+
+            return toret;
+        }
+        
+        private Gtk.VPaned BuildEditDocumentFrame()
+        {
+            var toret = new Gtk.VPaned();
+
+            toret.Pack1( this.BuildEditQuestionFrame(), false, false );
+            toret.Pack2( this.BuildEditAnswersFrame(), true, true );
+            
+            return toret;
+        }
+        
+        private Gtk.ScrolledWindow BuildDocumentTextView()
+        {
+            this.txtDocument = new Gtk.TextView {
+                Editable = false,
+                WrapMode = Gtk.WrapMode.Word
+            };
+            
+            this.txtDocument.FocusOutEvent += (o, args) => this.StoreQuestionText();
+            
+            return new Gtk.ScrolledWindow { this.txtDocument };
+        }
 
 		private void BuildNotebook()
         {
-			var vBox = new Gtk.VBox( false, 5 );
-			var hBox = new Gtk.HPaned();
+			var hBoxTestAndDocument = new Gtk.HPaned();
 			this.nbDocPages = new Gtk.Notebook();
 			this.nbDocPages.SwitchPage += (o, args) => this.OnCurrentPageChanged();
-
-			// Text view for the document
-			var swScrollText = new Gtk.ScrolledWindow();
-			this.txtDocument = new Gtk.TextView { Editable = false, WrapMode = Gtk.WrapMode.WordChar };
-			swScrollText.AddWithViewport( this.txtDocument );
-			this.txtDocument.FocusOutEvent += (o, args) => this.StoreQuestionText();
 
 			// Test treeview
 			this.tvDocument = new Gtk.TreeView();
@@ -237,52 +316,15 @@ namespace Testy.Gui {
 			frmTest.Add( swScroll );
 			swScroll.AddWithViewport( this.tvDocument );
 
-			// Frame question
-			var frmQuestion = new Gtk.Frame( "Question" );
-			var swScrolledQuestion = new Gtk.ScrolledWindow();
-			( (Gtk.Label) frmQuestion.LabelWidget ).Markup = "<b>Question</b>";
-			this.edQuestionText = new Gtk.TextView { WrapMode = Gtk.WrapMode.WordChar };
-			this.edQuestionText.KeyReleaseEvent += (o, args) => this.OnQuestionTextChanged();
-			swScrolledQuestion.AddWithViewport( edQuestionText );
-			frmQuestion.Add( swScrolledQuestion );
-			vBox.PackStart( frmQuestion, false, false, 5 );
-
-			// Frame answers
-			var bttAnswers = new Gtk.HButtonBox();
-			var vBoxAnswers = new Gtk.VBox( false, 5 );
-			var frmAnswer = new Gtk.Frame( "Answer" );
-			var hBoxAnswers = new Gtk.HBox( false, 5 );
-			var hBoxCorrect = new Gtk.HBox( false, 5 );
-			var swScrolledAnswers = new Gtk.ScrolledWindow();
-			( (Gtk.Label) frmAnswer.LabelWidget ).Markup = "<b>Answer</b>";
-			this.tvAnswers = new Gtk.TreeView();
-			swScrolledAnswers.Add( this.tvAnswers );
-			this.btAddAnswer = new Gtk.Button(
-				new Gtk.Image( this.iconAdd.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear ) ) );
-			this.btAddAnswer.Clicked += (sender, e) => this.AddAnswer();
-			this.btRemoveAnswer = new Gtk.Button(
-				new Gtk.Image( this.iconRemove.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear ) ) );
-			this.btRemoveAnswer.Clicked += (sender, e) => this.RemoveAnswer();
-			bttAnswers.Add( this.btAddAnswer );
-			bttAnswers.Add( this.btRemoveAnswer );
-			bttAnswers.Layout = Gtk.ButtonBoxStyle.Center;
-			bttAnswers.Spacing = 20;
-			hBoxAnswers.PackStart( swScrolledAnswers, true, true, 5 );
-			vBoxAnswers.PackStart( hBoxAnswers, true, true, 5 );
-			this.spNumberValidAnswer = new Gtk.SpinButton( 1, 20, 1 );
-			this.spNumberValidAnswer.ValueChanged += (o, args) => this.OnCorrectAnswerChanged();
-			hBoxCorrect.PackStart( new Gtk.Label( "Correct answer:" ), false, false, 5 );
-			hBoxCorrect.PackStart( this.spNumberValidAnswer, false, false, 5 );
-			hBoxCorrect.PackEnd( bttAnswers, false, false, 5 );
-			vBoxAnswers.PackStart( hBoxCorrect, false, false, 5 );
-			frmAnswer.Add( vBoxAnswers );
-			vBox.PackStart( frmAnswer, true, true, 5 );
-
 			// Layout
-			hBox.Pack1( frmTest, true, true );
-			hBox.Pack2( vBox, false, false );
-			this.nbDocPages.AppendPage( hBox, new Gtk.Label( "Edit" ) );
-			this.nbDocPages.AppendPage( swScrollText, new Gtk.Label( "Document" ) );
+			hBoxTestAndDocument.Pack1( frmTest, true, true );
+			hBoxTestAndDocument.Pack2( this.BuildEditDocumentFrame(), false, false );
+			this.nbDocPages.AppendPage(
+                            hBoxTestAndDocument,
+                            new Gtk.Label( "Edit" ) );
+			this.nbDocPages.AppendPage(
+                            this.BuildDocumentTextView(),
+                            new Gtk.Label( "Document" ) );
 			this.nbDocPages.Page = 0;
 		}
 
