@@ -1,23 +1,24 @@
-using System;
-using Gtk;
+// Testy (c) 2017-2025 Baltasar MIT License <baltasarq@gmail.com>
 
 
-namespace Testy.Gui {
+namespace Testy.Gui;
 
-    class Testy
+
+class Testy {
+    [STAThread]
+    static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        try {
+            var app = new Gtk.Application( "com.devbaltasarq.testy", GLib.ApplicationFlags.None );
+            Gtk.Application.Init();
+
+            var win = new MainWindow( app );
+            win.Show();
+
+            Gtk.Application.Run();
+        } catch(Exception e)
         {
-            try {
-                Application.Init();
-                MainWindow win = new MainWindow();
-                win.Show();
-                Application.Run();
-            } catch(Exception e)
-            {
-                System.Console.WriteLine( e.Message );
-                GtkUtil.Util.MsgError( null, "Critical error", e.Message );
-            }
+            GtkUtil.Misc.MsgError( null, "Critical error", e.Message );
         }
     }
 }

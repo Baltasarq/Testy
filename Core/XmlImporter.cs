@@ -32,7 +32,7 @@ namespace Testy.Core {
 
 				// Get text
 				if ( textList.Count == 1 ) {
-					q.Text = textList[ 0 ].InnerText;
+					q.Text = textList[ 0 ]?.InnerText ?? "";
 				} else {
 					throw new XmlException( "nonsense: more than one text label" );
 				}
@@ -40,12 +40,11 @@ namespace Testy.Core {
 				// Get answers
 				int numAnswer = 0;
 				foreach(XmlElement answerNode in answerList) {
-					XmlAttribute correct = answerNode.GetAttributeNode( XmlLblCorrect );
+					XmlAttribute? correct = answerNode?.GetAttributeNode( XmlLblCorrect );
 
-					if ( correct != null )
-					{
+					if ( correct is not null ) {
 						// Store new answer
-						q.AddAnswer( answerNode.InnerText );
+						q.AddAnswer( answerNode?.InnerText ?? "¿¿??" );
 						if ( Convert.ToInt32( correct.Value ) > 0 ) {
 							q.CorrectAnswer = numAnswer;
 						}

@@ -1,122 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{280B63B1-966E-4E40-8E22-2ADEBFDF61C3}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>Testy</RootNamespace>
-    <AssemblyName>Testy</AssemblyName>
-    <StartupObject>Testy.Gui.Testy</StartupObject>
-    <ApplicationIcon>Res\testy.ico</ApplicationIcon>
-    <CodePage>65001</CodePage>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <ConsolePause>false</ConsolePause>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <ConsolePause>false</ConsolePause>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>glib-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
-    <Reference Include="System.Data.Linq" />
-    <Reference Include="System.Web" />
+    <PackageReference Include="gtksharp" Version="3.24.24.95" />
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="Res\testy.ico" />
-    <EmbeddedResource Include="Res\testy.png" />
-    <EmbeddedResource Include="Res\about.png" />
-    <EmbeddedResource Include="Res\add.png" />
-    <EmbeddedResource Include="Res\close.png" />
-    <EmbeddedResource Include="Res\exit.png" />
-    <EmbeddedResource Include="Res\export.png" />
-    <EmbeddedResource Include="Res\find.png" />
-    <EmbeddedResource Include="Res\import.png" />
-    <EmbeddedResource Include="Res\new.png" />
-    <EmbeddedResource Include="Res\open.png" />
-    <EmbeddedResource Include="Res\remove.png" />
-    <EmbeddedResource Include="Res\save.png" />
-    <EmbeddedResource Include="Res\play.png" />
-    <EmbeddedResource Include="Res\shuffle.png" />
-    <EmbeddedResource Include="Res\check.png" />
-    <EmbeddedResource Include="Res\next.png" />
-    <EmbeddedResource Include="Res\previous.png" />
+    <ProjectReference Include="..\CsMyLib\GtkUtil\GtkUtil.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Gui\Main.cs" />
-    <Compile Include="Gui\AssemblyInfo.cs" />
-    <Compile Include="Core\Document.cs" />
-    <Compile Include="Core\AppInfo.cs" />
-    <Compile Include="Core\Question.cs" />
-    <Compile Include="Gui\DlgExport.cs" />
-    <Compile Include="Gui\MainWindowLogic.cs" />
-    <Compile Include="Gui\MainWindowView.cs" />
-    <Compile Include="Gui\DlgTakeTestView.cs" />
-    <Compile Include="Gui\DlgTakeTestLogic.cs" />
-    <Compile Include="Core\Importer.cs" />
-    <Compile Include="Core\Exporter.cs" />
-    <Compile Include="Core\TextExporter.cs" />
-    <Compile Include="Core\TextImporter.cs" />
-    <Compile Include="Core\CsvExporter.cs" />
-    <Compile Include="Core\XmlExporter.cs" />
-    <Compile Include="Core\ExcelExporter.cs" />
-    <Compile Include="Core\XmlImporter.cs" />
-    <Compile Include="Core\HtmlExporter.cs" />
-    <Compile Include="Core\Transformer.cs" />
-    <Compile Include="Core\RandomSequence.cs" />
-    <Compile Include="Gui\DlgCheckTestView.cs" />
-    <Compile Include="Gui\DlgCheckTestLogic.cs" />
+  	<EmbeddedResource Include="assets/*.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Gui\" />
-    <Folder Include="Core\" />
-    <Folder Include="Res\" />
-  </ItemGroup>
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <GtkDesignInfo generateGettext="False" />
-      </Properties>
-    </MonoDevelop>
-  </ProjectExtensions>
-  <ItemGroup>
-    <ProjectReference Include="..\CsMyLib\GtkUtil\GtkUtil.csproj">
-      <Project>{990E54DA-96E8-412B-8A4D-E79BDCA5F280}</Project>
-      <Name>GtkUtil</Name>
-    </ProjectReference>
-  </ItemGroup>
+
 </Project>
