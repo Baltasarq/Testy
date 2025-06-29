@@ -9,19 +9,19 @@ public partial class MainWindow {
 	{
 		try {
 			this.Icon =
-			this.iconTesty = Gdk.Pixbuf.LoadFromResource( "Testy.testy.png" );
-			this.iconAbout = Gdk.Pixbuf.LoadFromResource( "Testy.about.png" );
-			this.iconAdd = Gdk.Pixbuf.LoadFromResource( "Testy.add.png" );
-			this.iconClose = Gdk.Pixbuf.LoadFromResource( "Testy.close.png" );
-			this.iconExit = Gdk.Pixbuf.LoadFromResource( "Testy.exit.png" );
-			this.iconExport = Gdk.Pixbuf.LoadFromResource( "Testy.export.png" );
-			this.iconFind = Gdk.Pixbuf.LoadFromResource( "Testy.find.png" );
-			this.iconImport = Gdk.Pixbuf.LoadFromResource( "Testy.import.png" );
-			this.iconNew = Gdk.Pixbuf.LoadFromResource( "Testy.new.png" );
-			this.iconOpen = Gdk.Pixbuf.LoadFromResource( "Testy.open.png" );
-			this.iconRemove = Gdk.Pixbuf.LoadFromResource( "Testy.remove.png" );
-			this.iconSave = Gdk.Pixbuf.LoadFromResource( "Testy.save.png" );
-			this.iconPlay = Gdk.Pixbuf.LoadFromResource( "Testy.play.png" );
+			this.iconTesty   = Gdk.Pixbuf.LoadFromResource( "Testy.testy.png" );
+			this.iconAbout   = Gdk.Pixbuf.LoadFromResource( "Testy.about.png" );
+			this.iconAdd     = Gdk.Pixbuf.LoadFromResource( "Testy.add.png" );
+			this.iconClose   = Gdk.Pixbuf.LoadFromResource( "Testy.close.png" );
+			this.iconExit    = Gdk.Pixbuf.LoadFromResource( "Testy.exit.png" );
+			this.iconExport  = Gdk.Pixbuf.LoadFromResource( "Testy.export.png" );
+			this.iconFind    = Gdk.Pixbuf.LoadFromResource( "Testy.find.png" );
+			this.iconImport  = Gdk.Pixbuf.LoadFromResource( "Testy.import.png" );
+			this.iconNew     = Gdk.Pixbuf.LoadFromResource( "Testy.new.png" );
+			this.iconOpen    = Gdk.Pixbuf.LoadFromResource( "Testy.open.png" );
+			this.iconRemove  = Gdk.Pixbuf.LoadFromResource( "Testy.remove.png" );
+			this.iconSave    = Gdk.Pixbuf.LoadFromResource( "Testy.save.png" );
+			this.iconPlay    = Gdk.Pixbuf.LoadFromResource( "Testy.play.png" );
 			this.iconShuffle = Gdk.Pixbuf.LoadFromResource( "Testy.shuffle.png" );
 
 			this.tbToolbar.Style = Gtk.ToolbarStyle.Icons;

@@ -62,9 +62,8 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 		this.actShuffle = new GtkUtil.UIAction( "shuffle", "_Shuffle", "Shuffle questions" );
 		this.actTakeTest = new GtkUtil.UIAction( "take-test", "_Take test", "take test" );
 		this.actAbout = new GtkUtil.UIAction( "about", "_About...", "about..." );
-
-		this.btAddAnswer = new Gtk.Button( new Gtk.Image( this.actAddAnswer.Icon ));
-		this.btRemoveAnswer = new Gtk.Button( new Gtk.Image( this.actRemoveAnswer.Icon ));
+		this.btAddAnswer = this.actAddAnswer.CreateButton();
+		this.btRemoveAnswer = this.actRemoveAnswer.CreateButton();
 
 		// Prepare window
 		this.Build();
