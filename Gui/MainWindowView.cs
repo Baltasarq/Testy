@@ -1,32 +1,37 @@
 ﻿// Testy (c) 2017-2025 Baltasar MIT License <baltasarq@gmail.com>
 
 
+using Testy.Core;
+
 namespace Testy.Gui;
 
 
 public partial class MainWindow {
-	private void BuildIcons()
-	{
-		try {
-			this.Icon =
-			this.iconTesty   = Gdk.Pixbuf.LoadFromResource( "Testy.testy.png" );
-			this.iconAbout   = Gdk.Pixbuf.LoadFromResource( "Testy.about.png" );
-			this.iconAdd     = Gdk.Pixbuf.LoadFromResource( "Testy.add.png" );
-			this.iconClose   = Gdk.Pixbuf.LoadFromResource( "Testy.close.png" );
-			this.iconExit    = Gdk.Pixbuf.LoadFromResource( "Testy.exit.png" );
-			this.iconExport  = Gdk.Pixbuf.LoadFromResource( "Testy.export.png" );
-			this.iconFind    = Gdk.Pixbuf.LoadFromResource( "Testy.find.png" );
-			this.iconImport  = Gdk.Pixbuf.LoadFromResource( "Testy.import.png" );
-			this.iconNew     = Gdk.Pixbuf.LoadFromResource( "Testy.new.png" );
-			this.iconOpen    = Gdk.Pixbuf.LoadFromResource( "Testy.open.png" );
-			this.iconRemove  = Gdk.Pixbuf.LoadFromResource( "Testy.remove.png" );
-			this.iconSave    = Gdk.Pixbuf.LoadFromResource( "Testy.save.png" );
-			this.iconPlay    = Gdk.Pixbuf.LoadFromResource( "Testy.play.png" );
-			this.iconShuffle = Gdk.Pixbuf.LoadFromResource( "Testy.shuffle.png" );
+	private const string IconResourceExtension = ".png";
 
+	private void LoadIconsFromAssets()
+	{
+		string[] actualResPaths = this.GetType().Assembly.GetManifestResourceNames();
+
+		try {
+			foreach(string actualPath in actualResPaths) {
+				if ( actualPath.EndsWith( IconResourceExtension ) ) {
+					// Find its name
+					string name = actualPath[ 0.. ^IconResourceExtension.Length ];
+					int posLastDot = name.LastIndexOf( '.' );
+
+					if ( posLastDot >= 0 ) {
+						// Get name and store
+						name = name[ ( posLastDot + 1 ).. ].Trim().ToLower();
+						this.icons.Add( name,
+										Gdk.Pixbuf.LoadFromResource( actualPath ) );
+					}
+				}
+			}
+
+			this.Icon = this.icons[ AppInfo.Name.ToLower() ];
 			this.tbToolbar.Style = Gtk.ToolbarStyle.Icons;
 		} catch(Exception) {
-			this.iconTesty = null;
 			this.tbToolbar.Style = Gtk.ToolbarStyle.Text;
 		}
 	}
@@ -52,24 +57,24 @@ public partial class MainWindow {
 		this.actAbout.Activated += (sender, e) => this.About();
 
 		var iconQuestion = new Gtk.Image( "question-outline-symbolic",
-										  Gtk.IconSize.Button );
+										  Gtk.IconSize.Button )
+						    .Pixbuf;
 
-		this.actImport.Icon = this.iconImport ?? iconQuestion.Pixbuf;
-		this.actFind.Icon = this.iconFind ?? iconQuestion.Pixbuf;
-		this.actNew.Icon = this.iconNew ?? iconQuestion.Pixbuf;
-		this.actOpen.Icon = this.iconOpen ?? iconQuestion.Pixbuf;
-		this.actAppend.Icon = this.iconAdd ?? iconQuestion.Pixbuf;
-		this.actSave.Icon = this.iconSave ?? iconQuestion.Pixbuf;
-		this.actExport.Icon = this.iconExport ?? iconQuestion.Pixbuf;
-		this.actClose.Icon = this.iconClose ?? iconQuestion.Pixbuf;
-		this.actQuit.Icon = this.iconExit ?? iconQuestion.Pixbuf;
-		this.actAddQuestion.Icon = this.iconAdd ?? iconQuestion.Pixbuf;
-		this.actRemoveQuestion.Icon = this.iconRemove ?? iconQuestion.Pixbuf;
-		this.actAddAnswer.Icon = this.iconAdd ?? iconQuestion.Pixbuf;
-		this.actRemoveAnswer.Icon = this.iconRemove ?? iconQuestion.Pixbuf;
-		this.actShuffle.Icon = this.iconShuffle ?? iconQuestion.Pixbuf;
-		this.actTakeTest.Icon = this.iconPlay ?? iconQuestion.Pixbuf;
-		this.actAbout.Icon = this.iconAbout ?? iconQuestion.Pixbuf;
+		this.actImport.Icon = this.icons.GetValueOrDefault( "import" ) ?? iconQuestion;
+		this.actFind.Icon = this.icons.GetValueOrDefault( "find" ) ?? iconQuestion;
+		this.actNew.Icon = this.icons.GetValueOrDefault( "new" ) ?? iconQuestion;
+		this.actOpen.Icon = this.icons.GetValueOrDefault( "open" ) ?? iconQuestion;
+		this.actSave.Icon = this.icons.GetValueOrDefault( "save" ) ?? iconQuestion;
+		this.actExport.Icon = this.icons.GetValueOrDefault( "export" ) ?? iconQuestion;
+		this.actClose.Icon = this.icons.GetValueOrDefault( "close" ) ?? iconQuestion;
+		this.actQuit.Icon = this.icons.GetValueOrDefault( "exit" ) ?? iconQuestion;
+		this.actAddQuestion.Icon = this.icons.GetValueOrDefault( "add" ) ?? iconQuestion;
+		this.actRemoveQuestion.Icon = this.icons.GetValueOrDefault( "remove" ) ?? iconQuestion;
+		this.actAddAnswer.Icon = this.icons.GetValueOrDefault( "add" ) ?? iconQuestion;
+		this.actRemoveAnswer.Icon = this.icons.GetValueOrDefault( "remove" ) ?? iconQuestion;
+		this.actShuffle.Icon = this.icons.GetValueOrDefault( "shuffle" ) ?? iconQuestion;
+		this.actTakeTest.Icon = this.icons.GetValueOrDefault( "play" ) ?? iconQuestion;
+		this.actAbout.Icon = this.icons.GetValueOrDefault( "about" ) ?? iconQuestion;
 	}
 
 	private void BuildMenu()
@@ -254,7 +259,7 @@ public partial class MainWindow {
 	{
 		var vBox = new Gtk.Box( Gtk.Orientation.Vertical, 5 );
 
-		this.BuildIcons();
+		this.LoadIconsFromAssets();
 		this.BuildActions();
 		this.BuildMenu();
 		this.BuildToolbar();
@@ -275,54 +280,40 @@ public partial class MainWindow {
 			Gdk.WindowHints.MinSize
 		);
 		this.DeleteEvent += (o, args) => this.OnTerminateWindow( args );
-		this.Icon = this.iconTesty;
 	}
 
-	private Gdk.Pixbuf? iconAbout;
-	private Gdk.Pixbuf? iconImport;
-	private Gdk.Pixbuf? iconExport;
-	private Gdk.Pixbuf? iconFind;
-	private Gdk.Pixbuf? iconNew;
-	private Gdk.Pixbuf? iconOpen;
-	private Gdk.Pixbuf? iconAdd;
-	private Gdk.Pixbuf? iconPlay;
-	private Gdk.Pixbuf? iconShuffle;
-	private Gdk.Pixbuf? iconRemove;
-	private Gdk.Pixbuf? iconSave;
-	private Gdk.Pixbuf? iconClose;
-	private Gdk.Pixbuf? iconExit;
-	private Gdk.Pixbuf? iconTesty;
+	private readonly Dictionary<string, Gdk.Pixbuf?> icons;
 
-	private GtkUtil.UIAction actImport;
-	private GtkUtil.UIAction actFind;
-	private GtkUtil.UIAction actNew;
-	private GtkUtil.UIAction actOpen;
-	private GtkUtil.UIAction actAppend;
-	private GtkUtil.UIAction actSave;
-	private GtkUtil.UIAction actSaveAs;
-	private GtkUtil.UIAction actExport;
-	private GtkUtil.UIAction actClose;
-	private GtkUtil.UIAction actQuit;
+	private readonly GtkUtil.UIAction actImport;
+	private readonly GtkUtil.UIAction actFind;
+	private readonly GtkUtil.UIAction actNew;
+	private readonly GtkUtil.UIAction actOpen;
+	private readonly GtkUtil.UIAction actAppend;
+	private readonly GtkUtil.UIAction actSave;
+	private readonly GtkUtil.UIAction actSaveAs;
+	private readonly GtkUtil.UIAction actExport;
+	private readonly GtkUtil.UIAction actClose;
+	private readonly GtkUtil.UIAction actQuit;
 
-	private GtkUtil.UIAction actAddQuestion;
-	private GtkUtil.UIAction actRemoveQuestion;
-	private GtkUtil.UIAction actAddAnswer;
-	private GtkUtil.UIAction actRemoveAnswer;
+	private readonly GtkUtil.UIAction actAddQuestion;
+	private readonly GtkUtil.UIAction actRemoveQuestion;
+	private readonly GtkUtil.UIAction actAddAnswer;
+	private readonly GtkUtil.UIAction actRemoveAnswer;
 
-	private GtkUtil.UIAction actTakeTest;
-	private GtkUtil.UIAction actAbout;
-	private GtkUtil.UIAction actShuffle;
+	private readonly GtkUtil.UIAction actTakeTest;
+	private readonly GtkUtil.UIAction actAbout;
+	private readonly GtkUtil.UIAction actShuffle;
 
-	private Gtk.Toolbar tbToolbar;
-	private Gtk.MenuBar mbMainMenu;
-	private Gtk.Statusbar sbStatus;
-	private Gtk.Label lblStatusNumber;
-	private Gtk.Notebook nbDocPages;
-	private Gtk.TextView txtDocument;
-	private Gtk.SpinButton spNumberValidAnswer;
-	private Gtk.TextView edQuestionText;
-	private Gtk.TreeView tvDocument;
-	private Gtk.TreeView tvAnswers;
-	private Gtk.Button btAddAnswer;
-	private Gtk.Button btRemoveAnswer;
+	private readonly Gtk.Toolbar tbToolbar;
+	private readonly Gtk.MenuBar mbMainMenu;
+	private readonly Gtk.Statusbar sbStatus;
+	private readonly Gtk.Label lblStatusNumber;
+	private readonly Gtk.Notebook nbDocPages;
+	private readonly Gtk.TextView txtDocument;
+	private readonly Gtk.SpinButton spNumberValidAnswer;
+	private readonly Gtk.TextView edQuestionText;
+	private readonly Gtk.TreeView tvDocument;
+	private readonly Gtk.TreeView tvAnswers;
+	private readonly Gtk.Button btAddAnswer;
+	private readonly Gtk.Button btRemoveAnswer;
 }

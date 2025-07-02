@@ -4,8 +4,6 @@
 namespace Testy.Gui;
 
 
-using System;
-using System.Linq;
 using System.Collections.ObjectModel;
 
 using Core;
@@ -29,6 +27,7 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 	public MainWindow(Gtk.Application app)
 		: base( app )
 	{
+		this.editing = true;
 		this.tvAnswers = new Gtk.TreeView();
 		this.spNumberValidAnswer = new Gtk.SpinButton( 1, 20, 1 );
 		this.txtDocument = new Gtk.TextView {
@@ -42,6 +41,8 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 		this.sbStatus = new Gtk.Statusbar();
 		this.lblStatusNumber = new Gtk.Label( "0" ) { UseMarkup = true };
 		this.edQuestionText = new Gtk.TextView { WrapMode = Gtk.WrapMode.Word };
+
+		this.icons = new Dictionary<string, Gdk.Pixbuf?>();
 
 		this.fileName = string.Empty;
 
@@ -87,6 +88,8 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 		// Prepare the txtDocument TextView
 		var font = new Pango.FontDescription{ Family = "Monospace" };
 		this.txtDocument.ModifyFont( font );
+		this.editing = false;
+		this.CurrentQuestion = -1;
 	}
 
 	/// <summary>
@@ -95,10 +98,10 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 	private void OnQuestionFocusChangedTo()
 	{
 		if ( this.Document is not null ) {
-			this.tvwDocument.GetCurrentCell(out int row, out int col);
+			this.tvwDocument.GetCurrentCell( out int row, out int col );
 
 			if ( row >= 0
-			&& row < this.Document.CountQuestions )
+		      && row < this.Document.CountQuestions )
 			{
 				this.UpdateViewAt( row );
 			} else {
@@ -119,12 +122,25 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 		if ( this.Document is not null ) {
 			int questionNumber = this.GetQuestionBeingEdited();
 
-			if ( questionNumber >= 0 ) {
-				var q = this.Document[ questionNumber ];
-				q.Text = this.edQuestionText.Buffer.Text;
-				this.tvwDocument.Set( questionNumber, 1, q.Text );
-			} else {
-				this.ReportNoRow( questionNumber );
+			if ( !editing
+			  && questionNumber == this.CurrentQuestion )
+			{
+				if ( questionNumber >= 0 ) {
+					Question q = this.Document[ questionNumber ];
+					string newText = this.edQuestionText.Buffer.Text;
+
+					if ( q.Text != newText ) {
+						this.editing = true;
+						q.Text = newText;
+						this.tvwDocument.Set(
+											row: questionNumber,
+											col: 1,
+											value: q.Text );
+						this.editing = false;
+					}
+				} else {
+					this.ReportNoRow( questionNumber );
+				}
 			}
 		} else {
 			this.ReportNoDocument();
@@ -418,6 +434,7 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 		}
 
 		this.Document = null;
+		this.CurrentQuestion = -1;
 		this.DeactivateGui();
 	}
 
@@ -452,12 +469,12 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 			this.actTakeTest.Sensitive = false;
 
 			// Show the test modal window
-			using var dlgTest = new DlgTakeTest( this, this.Document );
+			using var dlgTest = new DlgTakeTest( this, this.Document, this.icons );
 			var result = (Gtk.ResponseType) dlgTest.Run();
 
 			if ( result == Gtk.ResponseType.Ok ) {
                 using var dlgChk =
-                    new DlgCheckTest( this, this.Document, dlgTest.Answers );
+                    new DlgCheckTest( this, this.Document, dlgTest.Answers, this.icons );
                 dlgChk.Run();
             }
 
@@ -473,7 +490,7 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 	private void Export()
 	{
 		if ( this.Document is not null ) {
-			var dlg = new DlgExport( this.Document, this.fileName, this );
+			var dlg = new DlgExport( this.Document, this.fileName, this, this.icons );
 			bool chosen = ( (Gtk.ResponseType) dlg.Run() != Gtk.ResponseType.Close );
 
 			while ( chosen ) {
@@ -688,12 +705,16 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 	private void UpdateViewAt(int index)
 	{
 		if ( this.Document is not null ) {
+			this.CurrentQuestion = -1;
+
 			if ( index >= 0
 	          && index < this.Document.Questions.Count )
 			{
 				Question q = this.Document[ index ];
 				this.CurrentQuestion = index;
 				var answers = q.Answers;
+
+				this.editing = true;
 
 				// Add question text
 				edQuestionText.Buffer.Text = q.Text;
@@ -713,6 +734,7 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 
 				// Update other items of the view
 				this.UpdateNumberOfQuestions();
+				this.editing = false;
 			} else {
 				this.ReportNoRow( index );
 			}
@@ -886,7 +908,6 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 		if ( this.Document is null ) {
 			this.ReportNoDocument();
 		} else {
-			//this.Document.Shuffle();
 			this.UpdateView();
 		}
 
@@ -928,7 +949,9 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 
 	private void ReportNoRow(int index)
 	{
-		this.ShowError( "No row at: " + index );
+		int numQuestions = this.Document?.CountQuestions ?? 0;
+
+		this.ShowError( "No valid row at: " + index + " of " + numQuestions );
 	}
 
 	private void ReportNoDocument()
@@ -938,7 +961,7 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 
 	private void ShowError(string msg)
 	{
-		this.ShowError( msg );
+		GtkUtil.Misc.MsgError( this, AppInfo.Name, msg );
 	}
 
 	public Document? Document {
@@ -949,6 +972,8 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 		get; private set;
 	}
 
+	/// <summary>The index of the question being edited.</summary>
+	/// <value>-1 if no question being edited.</value>
 	public int CurrentQuestion {
 		get; private set;
 	}
@@ -956,5 +981,6 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 	private readonly GtkUtil.TableTextView tvwDocument;
 	private readonly GtkUtil.TableTextView tvwAnswers;
 	private string fileName;
+	private bool editing;
 	private static int numberOfDocuments = 1;
 }

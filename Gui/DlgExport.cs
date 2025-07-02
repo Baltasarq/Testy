@@ -8,8 +8,13 @@ using Core;
 
 
 public class DlgExport: Gtk.Dialog {
-	public DlgExport(Document doc, string fileName, Gtk.Window owner)
+	public DlgExport(
+				Document doc,
+				string fileName,
+				Gtk.Window owner,
+				Dictionary<string, Gdk.Pixbuf?> icons)
 	{
+		this.icons = icons;
 		this.edFileName = new Gtk.Entry { IsEditable = false };
 		this.btSaveAs = new Gtk.Button( "..." );
 		this.cbFormat = new Gtk.ComboBoxText();
@@ -21,27 +26,18 @@ public class DlgExport: Gtk.Dialog {
 		this.SetGeometryHints(
 			this,
 			new Gdk.Geometry { MinHeight = 200, MinWidth = 400 },
-			Gdk.WindowHints.MinSize
-		);
+			Gdk.WindowHints.MinSize );
 
 		this.Build();
 
-		this.btSave = new Gtk.Button( new Gtk.Image( this.iconSave ) );
-		this.btClose = new Gtk.Button( new Gtk.Image( this.iconClose ) );
+		this.btClose = (Gtk.Button) this.AddButton( "", Gtk.ResponseType.Close );
+		this.btSave = (Gtk.Button) this.AddButton( "", Gtk.ResponseType.Apply );
+		this.btSave.Image = new Gtk.Image( icons[ "save" ] );
+		this.btClose.Image = new Gtk.Image( icons[ "close" ] );
 
 		this.edFileName.Text = fileName;
 		this.SetPosition( Gtk.WindowPosition.CenterOnParent );
 		this.UpdateExtensionHonoringFormat();
-	}
-
-	private void BuildIcons()
-	{
-		try {
-			this.iconSave = Gdk.Pixbuf.LoadFromResource( "Testy.save.png" );
-			this.iconClose = Gdk.Pixbuf.LoadFromResource( "Testy.close.png" );
-		} catch(Exception) {
-			// Ignored, no icons.
-		}
 	}
 
 	private void Build()
@@ -49,10 +45,8 @@ public class DlgExport: Gtk.Dialog {
 		var frmFile = new Gtk.Frame( "" );
 		var frmFormat = new Gtk.Frame( "" );
 		var frmNumQuestions = new Gtk.Frame( "" );
-		var vbox = new Gtk.Box( Gtk.Orientation.Vertical, 5 );
 		var hBoxFile = new Gtk.Box( Gtk.Orientation.Horizontal, 5 );
-
-		this.BuildIcons();
+		var vbox = (Gtk.Box) this.Child;
 
 		// Frame labels
 		( (Gtk.Label) frmFile.LabelWidget ).Markup = "<b>File</b>";
@@ -82,11 +76,7 @@ public class DlgExport: Gtk.Dialog {
 		vbox.PackStart( frmFile, true, true, 5 );
 		vbox.PackStart( frmFormat, true, false, 5 );
 		vbox.PackStart( frmNumQuestions, true, false, 5 );
-		this.Add( vbox );
 
-		// Buttons
-		this.AddActionWidget( btClose, Gtk.ResponseType.Close );
-		this.AddActionWidget( btSave, Gtk.ResponseType.Close );
 		this.ShowAll();
 	}
 
@@ -147,13 +137,12 @@ public class DlgExport: Gtk.Dialog {
 		get; private set;
 	}
 
-	private Gtk.Entry edFileName;
-	private Gtk.Button btSaveAs;
-	private Gtk.Button btSave;
-	private Gtk.Button btClose;
-	private Gtk.ComboBoxText cbFormat;
-	private Gtk.SpinButton sbNumQuestions;
+	private readonly Gtk.Entry edFileName;
+	private readonly Gtk.Button btSaveAs;
+	private readonly Gtk.Button btSave;
+	private readonly Gtk.Button btClose;
+	private readonly Gtk.ComboBoxText cbFormat;
+	private readonly Gtk.SpinButton sbNumQuestions;
 
-	private Gdk.Pixbuf? iconSave;
-	private Gdk.Pixbuf? iconClose;
+	private readonly Dictionary<string, Gdk.Pixbuf?> icons;
 }

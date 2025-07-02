@@ -8,8 +8,12 @@ using Core;
 
 
 public partial class DlgTakeTest: Gtk.Dialog {
-	public DlgTakeTest(Gtk.Window wndParent, Document doc)
+	public DlgTakeTest(
+				Gtk.Window wndParent,
+				Document doc,
+				Dictionary<string, Gdk.Pixbuf?> icons)
 	{
+		this.icons = icons;
 		this.lblTitle = new Gtk.Label();
 		this.lblNumber = new Gtk.Label();
 		this.cbAnswers = new Gtk.ComboBoxText();
@@ -19,20 +23,36 @@ public partial class DlgTakeTest: Gtk.Dialog {
 			WrapMode = Gtk.WrapMode.Word
 		};
 
-		this.actNext = new GtkUtil.UIAction( "next", "_Next", "next question" );
-		this.actPrev = new GtkUtil.UIAction( "previous", "_Previous", "previous question" );
-		this.actQuit = new GtkUtil.UIAction( "close", "_Close", "close" );
-		this.actCheck = new GtkUtil.UIAction( "check", "_Check", "check answers" );
+		this.btNext = new Gtk.ToolButton(
+								new Gtk.Image( icons[ "next" ] ),
+								"next" );
+		this.btNext.Clicked += (o, e) => this.NextQuestion();
+
+		this.btPrev = new Gtk.ToolButton(
+								new Gtk.Image( icons[ "previous" ] ),
+								"previous" );
+		this.btPrev.Clicked += (o, e) => this.PreviousQuestion();
+
+		this.btCheck = new Gtk.ToolButton(
+								new Gtk.Image( icons[ "check" ] ),
+								"check" );
+		this.btCheck.Clicked += (o, e) => this.Check();
+
+		this.btQuit = new Gtk.ToolButton(
+								new Gtk.Image( icons[ "close" ] ),
+								"close" );
+		this.btQuit.Clicked += (o, e) => this.Quit();
 
 		this.tbToolbar = new Gtk.Toolbar {
-			this.actPrev.CreateToolButton(),
-			this.actNext.CreateToolButton(),
-			this.actCheck.CreateToolButton(),
-			this.actQuit.CreateToolButton()
+			this.btPrev,
+			this.btNext,
+			this.btCheck,
+			this.btQuit
 		};
 
 		this.Document = doc;
-		this.answers = new List<int>( doc.CountQuestions );
+		this.answers = new List<int>(
+							Enumerable.Repeat( 0, this.Document.CountQuestions ) );
 		this.QuestionNumber = -1;
 		this.Build();
 
@@ -40,39 +60,6 @@ public partial class DlgTakeTest: Gtk.Dialog {
 		this.Modal = true;
 		this.Title = this.Document.Title;
 		this.TransientFor = wndParent;
-	}
-
-	private void BuildIcons()
-	{
-		try {
-			this.iconNext = Gdk.Pixbuf.LoadFromResource( "Testy.next.png" );
-			this.iconPrevious = Gdk.Pixbuf.LoadFromResource( "Testy.previous.png" );
-			this.iconCheck = Gdk.Pixbuf.LoadFromResource( "Testy.check.png" );
-
-			this.tbToolbar.Style = Gtk.ToolbarStyle.Text;
-		} catch(Exception) {
-			this.tbToolbar.Style = Gtk.ToolbarStyle.Text;
-		}
-	}
-
-	private void BuildActions()
-	{
-		this.actNext.Activated += (sender, e) => this.NextQuestion();
-		this.actPrev.Activated += (sender, e) => this.PreviousQuestion();
-		this.actQuit.Activated += (sender, e) => this.Quit();
-		this.actCheck.Activated += (sender, e) => this.Check();
-
-		if ( this.iconNext is not null ) {
-			this.actNext.Icon = this.iconNext;
-		}
-
-		if ( this.iconPrevious is not null ) {
-			this.actPrev.Icon = this.iconPrevious;
-		}
-
-		if ( this.iconCheck is not null ) {
-			this.actCheck.Icon = this.iconCheck;
-		}
 	}
 
 	private Gtk.ScrolledWindow BuildQuestionView()
@@ -101,17 +88,14 @@ public partial class DlgTakeTest: Gtk.Dialog {
 
 	private void Build()
 	{
-		var vbox = new Gtk.Box( Gtk.Orientation.Vertical, 5 );
+		var vbox = (Gtk.Box) this.Child;
 
-		this.BuildIcons();
-		this.BuildActions();
 		this.BuildComboAnswers();
 
 		vbox.PackStart( this.tbToolbar, false, false, 0 );
 		vbox.PackStart( this.BuildQuestionView(), true, true, 5 );
 		vbox.PackStart( this.cbAnswers, false, false, 5 );
 		vbox.PackStart( this.BuildActionbar(), false, false, 0 );
-		this.Add( vbox );
 
 		// Set min size
 		this.SetGeometryHints(
@@ -128,19 +112,17 @@ public partial class DlgTakeTest: Gtk.Dialog {
 		this.ShowAll();
 	}
 
-	private Gdk.Pixbuf? iconNext;
-	private Gdk.Pixbuf? iconPrevious;
-	private Gdk.Pixbuf? iconCheck;
+	private readonly Dictionary<string, Gdk.Pixbuf?> icons;
 
-	private GtkUtil.UIAction actNext;
-	private GtkUtil.UIAction actPrev;
-	private GtkUtil.UIAction actQuit;
-	private GtkUtil.UIAction actCheck;
+	private readonly Gtk.ToolButton btNext;
+	private readonly Gtk.ToolButton btPrev;
+	private readonly Gtk.ToolButton btQuit;
+	private readonly Gtk.ToolButton btCheck;
 
-	private Gtk.Toolbar tbToolbar;
-	private Gtk.ComboBoxText cbAnswers;
-	private Gtk.ComboBoxText cbQuestionNumber;
-	private Gtk.TextView txtQuestion;
-	private Gtk.Label lblTitle;
-	private Gtk.Label lblNumber;
+	private readonly Gtk.Toolbar tbToolbar;
+	private readonly Gtk.ComboBoxText cbAnswers;
+	private readonly Gtk.ComboBoxText cbQuestionNumber;
+	private readonly Gtk.TextView txtQuestion;
+	private readonly Gtk.Label lblTitle;
+	private readonly Gtk.Label lblNumber;
 }

@@ -5,12 +5,12 @@ namespace Testy.Gui;
 
 
 using System.Collections.ObjectModel;
+
 using Core;
 
+
 public partial class DlgTakeTest {
-	/// <summary>
-	/// Init this instance.
-	/// </summary>
+	/// <summary>Init this instance.</summary>
 	private void Init()
 	{
 		// Prepare combobox of question numbers
@@ -26,18 +26,17 @@ public partial class DlgTakeTest {
 		this.QuestionNumber = 0;
 		this.cbAnswers.Show();
 		this.cbAnswers.Sensitive = true;
+		this.ShowAll();
 	}
 
 	private void EnableQuestionControls()
 	{
 		this.cbQuestionNumber.Active = this.QuestionNumber;
-		this.actPrev.Sensitive = this.QuestionNumber > 0;
-		this.actNext.Sensitive = this.QuestionNumber < ( this.Document.CountQuestions - 1 );
+		this.btPrev.Sensitive = this.QuestionNumber > 0;
+		this.btNext.Sensitive = this.QuestionNumber < ( this.Document.CountQuestions - 1 );
 	}
 
-	/// <summary>
-	/// Go to the specified questionNumber.
-	/// </summary>
+	/// <summary>Go to the specified questionNumber.</summary>
 	public void Go(int qn)
 	{
 		var question = this.Document.Questions[ qn ];
@@ -59,9 +58,7 @@ public partial class DlgTakeTest {
 		return;
 	}
 
-	/// <summary>
-	/// Goes to the current question
-	/// </summary>
+	/// <summary>Goes to the current question</summary>
 	public void Go()
 	{
 		this.Go( this.QuestionNumber );
@@ -70,22 +67,19 @@ public partial class DlgTakeTest {
 	///<summary>Closes the dialog for checking.</summary>
 	private void Check()
 	{
+Console.WriteLine( "Check!!");
 		this.Hide();
 		this.Respond( Gtk.ResponseType.Ok );
 	}
 
-	/// <summary>
-	/// Quit this dialog, called when the user presses exit.
-	/// </summary>
+	/// <summary>Quit this dialog, called when the user presses exit.</summary>
 	private void Quit()
 	{
 		this.Respond( Gtk.ResponseType.Close );
 		this.Hide();
 	}
 
-	/// <summary>
-	/// Previous question action.
-	/// </summary>
+	/// <summary>Previous question action.</summary>
 	private void PreviousQuestion()
 	{
 		// Go backwards
@@ -101,9 +95,7 @@ public partial class DlgTakeTest {
 		this.EnableQuestionControls();
 	}
 
-	/// <summary>
-	/// Next question action.
-	/// </summary>
+	/// <summary>Next question action.</summary>
 	private void NextQuestion()
 	{
 		int MaxQuestions = this.Document.CountQuestions;
@@ -121,24 +113,20 @@ public partial class DlgTakeTest {
 		this.EnableQuestionControls();
 	}
 
-	/// <summary>
-	/// The combo for question numbers has changed
-	/// </summary>
+	/// <summary>The combo for question numbers has changed</summary>
 	private void OnQuestionNumberChanged()
 	{
 		this.QuestionNumber = this.cbQuestionNumber.Active;
 		this.Go();
 	}
 
-	/// <summary>
-	/// Raised when the combobox for answers is cliked.
-	/// </summary>
+	/// <summary>Raised when the combobox for answers is cliked.</summary>
 	private void OnAnswerChanged()
 	{
 		int newAnswer = this.cbAnswers.Active;
 
 		if ( this.QuestionNumber > -1
-			&& newAnswer > -1 )
+		  && newAnswer > -1 )
 		{
 			this.answers[ this.QuestionNumber ] = newAnswer;
 		}

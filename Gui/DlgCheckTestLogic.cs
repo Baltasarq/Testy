@@ -10,11 +10,17 @@ using System.Diagnostics;
 using Core;
 using System.Collections.ObjectModel;
 
+
 public partial class DlgCheckTest: Gtk.Dialog {
-    public DlgCheckTest(Gtk.Window wndParent, Document doc, ReadOnlyCollection<int> answers)
+    public DlgCheckTest(
+                Gtk.Window wndParent,
+                Document doc,
+                ReadOnlyCollection<int> answers,
+                Dictionary<string, Gdk.Pixbuf?> icons)
     {
         int numQuestions = answers.Count;
 
+        this.icons = icons;
         this.txtQuestion = new Gtk.TextView {
             Editable = false,
             WrapMode = Gtk.WrapMode.Word
@@ -29,15 +35,27 @@ public partial class DlgCheckTest: Gtk.Dialog {
         this.lblTitle = new Gtk.Label();
         this.lblCorrect = new Gtk.Label();
         this.lblNumber = new Gtk.Label();
-        this.imgCorrection = new Gtk.Image( this.iconCheck );
+        this.imgCorrection = new Gtk.Image( this.icons[ "check" ] );
 
-        this.actNext = new GtkUtil.UIAction( "next", "_Next", "next question" );
-        this.actPrev = new GtkUtil.UIAction( "previous", "_Previous", "previous question" );
-        this.actQuit = new GtkUtil.UIAction( "quit", "_Quit", "quit" );
+        this.btNext = new Gtk.ToolButton(
+								new Gtk.Image( icons[ "next" ] ),
+								"next" );
+		this.btNext.Clicked += (o, e) => this.NextQuestion();
+
+		this.btPrev = new Gtk.ToolButton(
+								new Gtk.Image( icons[ "previous" ] ),
+								"previous" );
+		this.btPrev.Clicked += (o, e) => this.PreviousQuestion();
+
+		this.btQuit = new Gtk.ToolButton(
+								new Gtk.Image( icons[ "close" ] ),
+								"close" );
+		this.btQuit.Clicked += (o, e) => this.Quit();
+
         this.tbToolbar = [
-            this.actPrev.CreateToolButton(),
-            this.actNext.CreateToolButton(),
-            this.actQuit.CreateToolButton() ];
+            this.btPrev,
+            this.btNext,
+            this.btQuit ];
 
         this.Document = doc;
         this.QuestionNumber = -1;
@@ -91,13 +109,11 @@ public partial class DlgCheckTest: Gtk.Dialog {
     private void EnableQuestionControls()
     {
         this.cbQuestionNumber.Active = this.QuestionNumber;
-        this.actPrev.Sensitive = this.QuestionNumber > 0;
-        this.actNext.Sensitive = this.QuestionNumber < ( this.Document.CountQuestions - 1 );
+        this.btPrev.Sensitive = this.QuestionNumber > 0;
+        this.btNext.Sensitive = this.QuestionNumber < ( this.Document.CountQuestions - 1 );
     }
 
-    /// <summary>
-    /// Go to the specified questionNumber.
-    /// </summary>
+    /// <summary>Go to the specified questionNumber.</summary>
     public void Go(int qn)
     {
         var strCorrection = new StringBuilder();
@@ -109,17 +125,10 @@ public partial class DlgCheckTest: Gtk.Dialog {
 
         // Prepare correction
         if ( this.answers[ qn ] == question.CorrectAnswer ) {
-            if ( this.iconCheck is not null ) {
-                this.imgCorrection.Pixbuf =
-                    this.iconCheck.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear );
-            }
-
+            this.imgCorrection.Pixbuf = this.icons[ "check" ];
             strCorrection.Append( question.Answers[ this.answers[ qn ] ] );
         } else {
-            if ( this.iconClose is not null ) {
-                this.imgCorrection.Pixbuf =
-                    this.iconClose.ScaleSimple( 16, 16, Gdk.InterpType.Bilinear );
-            }
+            this.imgCorrection.Pixbuf = this.icons[ "close" ];
 
             for(int i = 0; i < question.Answers.Count; ++i) {
                 char prefix = ' ';
@@ -144,25 +153,19 @@ public partial class DlgCheckTest: Gtk.Dialog {
         return;
     }
 
-    /// <summary>
-    /// Goes to the current question
-    /// </summary>
+    /// <summary>Goes to the current question.</summary>
     public void Go()
     {
         this.Go( this.QuestionNumber );
     }
 
-    /// <summary>
-    /// Quit this dialog.
-    /// </summary>
+    /// <summary>Quit this dialog.</summary>
     private void Quit()
     {
         this.Hide();
     }
 
-    /// <summary>
-    /// Previous question action.
-    /// </summary>
+    /// <summary>Previous question action.</summary>
     private void PreviousQuestion()
     {
         // Go backwards
@@ -178,9 +181,7 @@ public partial class DlgCheckTest: Gtk.Dialog {
         this.EnableQuestionControls();
     }
 
-    /// <summary>
-    /// Next question action.
-    /// </summary>
+    /// <summary>Next question action.</summary>
     private void NextQuestion()
     {
         int MaxQuestions = this.Document.CountQuestions;
@@ -198,9 +199,7 @@ public partial class DlgCheckTest: Gtk.Dialog {
         this.EnableQuestionControls();
     }
 
-    /// <summary>
-    /// The combo for question numbers has changed
-    /// </summary>
+    /// <summary>The combo for question numbers has changed</summary>
     private void OnQuestionNumberChanged()
     {
         this.QuestionNumber = this.cbQuestionNumber.Active;
@@ -222,4 +221,5 @@ public partial class DlgCheckTest: Gtk.Dialog {
     public ReadOnlyCollection<int> Answers => this.answers.AsReadOnly();
 
     private readonly ReadOnlyCollection<int> answers;
+    private readonly Dictionary<string, Gdk.Pixbuf?> icons;
 }

@@ -5,44 +5,6 @@ namespace Testy.Gui;
 
 
 public partial class DlgCheckTest: Gtk.Dialog {
-    private void BuildIcons()
-    {
-        try {
-            this.iconNext = Gdk.Pixbuf.LoadFromResource( "Testy.next.png" );
-            this.iconPrevious = Gdk.Pixbuf.LoadFromResource( "Testy.previous.png" );
-            this.iconClose = Gdk.Pixbuf.LoadFromResource( "Testy.close.png" );
-            this.iconCheck = Gdk.Pixbuf.LoadFromResource( "Testy.check.png" );
-
-            this.tbToolbar.Style = Gtk.ToolbarStyle.Icons;
-        } catch(Exception) {
-            this.tbToolbar.Style = Gtk.ToolbarStyle.Text;
-        }
-    }
-
-    private void BuildActions()
-    {
-        // Next
-        this.actNext.Activated += (sender, e) => this.NextQuestion();
-
-        if ( this.iconNext is not null ) {
-            this.actNext.Icon = this.iconNext;
-        }
-
-        // Previous
-        this.actPrev.Activated += (sender, e) => this.PreviousQuestion();
-
-        if ( this.iconPrevious is not null ) {
-            this.actPrev.Icon = this.iconPrevious;
-        }
-
-        // Quit
-        this.actQuit.Activated += (sender, e) => this.Quit();
-
-        if ( this.iconClose is not null ) {
-            this.actQuit.Icon = this.iconClose;
-        }
-    }
-
     private Gtk.ScrolledWindow BuildQuestionView()
     {
         return [ this.txtQuestion ];
@@ -83,16 +45,12 @@ public partial class DlgCheckTest: Gtk.Dialog {
     /// </summary>
     private void Build()
     {
-        var vbox = new Gtk.Box( Gtk.Orientation.Vertical, 5 );
-
-        this.BuildIcons();
-        this.BuildActions();
+        var vbox = (Gtk.Box) this.Child;
 
         vbox.PackStart( this.tbToolbar, false, false, 0 );
         vbox.PackStart( this.BuildQuestionView(), true, true, 5 );
         vbox.PackStart( this.BuildCorrectionView(), true, true, 5 );
         vbox.PackStart( this.BuildActionbar(), false, false, 0 );
-        this.Add( vbox );
 
         // Set min size
         this.SetGeometryHints(
@@ -108,21 +66,16 @@ public partial class DlgCheckTest: Gtk.Dialog {
         this.ShowAll();
     }
 
-    private Gdk.Pixbuf? iconNext;
-    private Gdk.Pixbuf? iconPrevious;
-    private Gdk.Pixbuf? iconClose;
-    private Gdk.Pixbuf? iconCheck;
+    private readonly Gtk.ToolButton btNext;
+    private readonly Gtk.ToolButton btPrev;
+    private readonly Gtk.ToolButton btQuit;
 
-    private GtkUtil.UIAction actNext;
-    private GtkUtil.UIAction actPrev;
-    private GtkUtil.UIAction actQuit;
-
-    private Gtk.Toolbar tbToolbar;
-    private Gtk.Image imgCorrection;
-    private Gtk.ComboBox cbQuestionNumber;
-    private Gtk.TextView txtQuestion;
-    private Gtk.TextView txtCorrection;
-    private Gtk.Label lblTitle;
-    private Gtk.Label lblNumber;
-    private Gtk.Label lblCorrect;
+    private readonly Gtk.Toolbar tbToolbar;
+    private readonly Gtk.Image imgCorrection;
+    private readonly Gtk.ComboBox cbQuestionNumber;
+    private readonly Gtk.TextView txtQuestion;
+    private readonly Gtk.TextView txtCorrection;
+    private readonly Gtk.Label lblTitle;
+    private readonly Gtk.Label lblNumber;
+    private readonly Gtk.Label lblCorrect;
 }
