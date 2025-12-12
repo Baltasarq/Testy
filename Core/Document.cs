@@ -66,7 +66,7 @@ public class Document: IDisposable, IEnumerable<Question> {
 			this.questions.AddRange( value );
 		}
 	}
-	
+
 	/// <summary>
 	/// Gets or sets the <see cref="Testy.Core.Question"/> with the specified index #i.
 	/// </summary>
@@ -82,7 +82,7 @@ public class Document: IDisposable, IEnumerable<Question> {
 			this.questions[ i ] = value;
 		}
 	}
-	
+
 	/// <summary>
 	/// Gets the count of all questions in the document.
 	/// </summary>
@@ -94,7 +94,7 @@ public class Document: IDisposable, IEnumerable<Question> {
 			return this.questions.Count;
 		}
 	}
-	
+
 	/// <summary>
 	/// Add the specified question.
 	/// </summary>
@@ -105,7 +105,7 @@ public class Document: IDisposable, IEnumerable<Question> {
 	{
 		this.Add( new Question( questionTxt ) );
 	}
-	
+
 	/// <summary>
 	/// Add the specified question to the document.
 	/// </summary>
@@ -125,14 +125,14 @@ public class Document: IDisposable, IEnumerable<Question> {
 	{
 		this.questions.AddRange( vq );
 	}
-	
+
 	public void RemoveAt(int index)
 	{
 		if ( index >= 0
 			&& index < this.CountQuestions )
 		{
 			this.questions.RemoveAt( index );
-			
+
 			if ( this.CountQuestions == 0 ) {
 				this.AddDefaultQuestion();
 			}
@@ -140,7 +140,7 @@ public class Document: IDisposable, IEnumerable<Question> {
 			throw new ArgumentException( "Invalid question index: " + index );
 		}
 	}
-	
+
 	/// <summary>
 	/// Adds the default question (so there is at least one question).
 	/// </summary>
@@ -175,21 +175,21 @@ public class Document: IDisposable, IEnumerable<Question> {
 	public void Clear() {
 		this.questions.Clear();
 	}
-	
+
 	IEnumerator<Question> IEnumerable<Question>.GetEnumerator()
 	{
 		foreach(var c in this.questions) {
 			yield return c;
 		}
 	}
-	
+
 	IEnumerator IEnumerable.GetEnumerator()
 	{
 		foreach(var c in this.questions) {
 			yield return c;
 		}
 	}
-	
+
 	/// <summary>
 	/// Returns a <see cref="System.String"/> that represents the current <see cref="Testy.Core.Document"/>.
 	/// </summary>
@@ -200,19 +200,20 @@ public class Document: IDisposable, IEnumerable<Question> {
 	{
 		int numQuestion = 1;
 		var toret = new StringBuilder();
-		
+
 		foreach (var q in this) {
 			toret.Append( String.Format( "{0, 4}", numQuestion ) );
 			toret.Append( ". " );
 			toret.Append( q.ToString() );
 			toret.AppendLine();
+			toret.AppendLine();
 
 			++numQuestion;
 		}
-		
+
 		return toret.ToString();
 	}
-	
+
 	/// <summary>
 	/// Gets or sets the title of the document test.
 	/// </summary>
