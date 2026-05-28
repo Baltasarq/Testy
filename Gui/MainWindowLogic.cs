@@ -86,8 +86,11 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 		this.tvwAnswers.TableChanged += this.OnAnswerChanged;
 
 		// Prepare the txtDocument TextView
-		var font = new Pango.FontDescription{ Family = "Monospace" };
-		this.txtDocument.ModifyFont( font );
+		var provider = new Gtk.CssProvider();
+
+		// Modify font for mono
+        provider.LoadFromData( @"textview { font-family: Monospace; }" );
+        this.txtDocument.StyleContext.AddProvider( provider, 800 );
 		this.editing = false;
 		this.CurrentQuestion = -1;
 	}
@@ -254,8 +257,16 @@ public partial class MainWindow: Gtk.ApplicationWindow {
 	/// </summary>
 	private void Quit()
 	{
+		var app = GLib.Application.Default;
+
 		this.CloseDocument();
-		Gtk.Application.Quit();
+		this.Hide();
+
+		if ( app is null ) {
+			Environment.Exit( 0 );
+		} else {
+			app.Quit();
+		}
 	}
 
 	/// <summary>

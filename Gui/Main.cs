@@ -1,6 +1,8 @@
 // Testy (c) 2017-2025 Baltasar MIT License <baltasarq@gmail.com>
 
 
+using Testy.Core;
+
 namespace Testy.Gui;
 
 
@@ -9,13 +11,14 @@ class Testy {
     static void Main(string[] args)
     {
         try {
-            var app = new Gtk.Application( "com.devbaltasarq.testy", GLib.ApplicationFlags.None );
-            Gtk.Application.Init();
+            var app = new Gtk.Application( null, GLib.ApplicationFlags.None );
 
-            var win = new MainWindow( app );
-            win.Show();
+            app.Activated += (sender, e) => {
+                var window = new MainWindow( app );
+                window.Show();
+            };
 
-            Gtk.Application.Run();
+            app.Run( AppInfo.Id, args );
         } catch(Exception e)
         {
             GtkUtil.Misc.MsgError( null, "Critical error", e.Message );

@@ -274,11 +274,7 @@ public partial class MainWindow {
 		this.ShowAll();
 
 		// Prepare
-		this.SetGeometryHints(
-			this,
-			new Gdk.Geometry { MinWidth = 640, MinHeight = 480 },
-			Gdk.WindowHints.MinSize
-		);
+		this.SetSizeRequest( 640, 480 );
 		this.DeleteEvent += (o, args) => this.OnTerminateWindow( args );
 	}
 

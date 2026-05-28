@@ -13,10 +13,11 @@ public partial class DlgCheckTest: Gtk.Dialog {
     private Gtk.ScrolledWindow BuildCorrectionView()
     {
         var scrlCorrection = new Gtk.ScrolledWindow();
+        var provider = new Gtk.CssProvider();
 
         // Modify font for mono
-        var font = new Pango.FontDescription () { Family = "Monospace" };
-        this.txtCorrection.ModifyFont( font );
+        provider.LoadFromData( @"textview { font-family: Monospace; }" );
+        this.txtCorrection.StyleContext.AddProvider( provider, 800 );
 
         scrlCorrection.Add( this.txtCorrection );
         return scrlCorrection;
@@ -53,12 +54,7 @@ public partial class DlgCheckTest: Gtk.Dialog {
         vbox.PackStart( this.BuildActionbar(), false, false, 0 );
 
         // Set min size
-        this.SetGeometryHints(
-            this,
-            new Gdk.Geometry {
-                MinWidth = 640,
-                MinHeight = 480 },
-            Gdk.WindowHints.MinSize );
+        this.SetSizeRequest( 640, 480 );
 
         this.WindowPosition = Gtk.WindowPosition.CenterOnParent;
         this.Shown += (sender, e) => this.Init();

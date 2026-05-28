@@ -98,13 +98,7 @@ public partial class DlgTakeTest: Gtk.Dialog {
 		vbox.PackStart( this.BuildActionbar(), false, false, 0 );
 
 		// Set min size
-		this.SetGeometryHints(
-			this,
-			new Gdk.Geometry {
-				MinWidth = 640,
-				MinHeight = 480 },
-			Gdk.WindowHints.MinSize
-		);
+		this.SetSizeRequest( 640, 480 );
 
 		this.WindowPosition = Gtk.WindowPosition.CenterOnParent;
 		this.Shown += (sender, e) => this.Init();

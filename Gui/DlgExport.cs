@@ -23,10 +23,7 @@ public class DlgExport: Gtk.Dialog {
 		this.Document = doc;
 		this.TransientFor = owner;
 		this.Icon = owner.Icon;
-		this.SetGeometryHints(
-			this,
-			new Gdk.Geometry { MinHeight = 200, MinWidth = 400 },
-			Gdk.WindowHints.MinSize );
+		this.SetSizeRequest( 200, 400 );
 
 		this.Build();
 
